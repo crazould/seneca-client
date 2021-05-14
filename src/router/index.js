@@ -1,25 +1,42 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from "vue";
+import VueRouter from "vue-router";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/Login.vue')
+    path: "/login",
+    name: "Login",
+    component: () => import("../views/Login.vue"),
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('../views/Dashboard.vue')
-  }
-]
+    path: "/",
+    name: "Home",
+    component: () => import("../views/Home/Home.vue"),
+    children: [
+      {
+        path: "dashboard",
+        name: "Dashboard",
+        component: () => import("../views/Home/Dashboard.vue")
+      }
+    ]
+  },
+];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  // use isAuthenticated for debugging
+  // set false for debugging
+  // set true for development
+  let isAuthenticated = true
+  if (to.name !== 'Login' && !isAuthenticated) next({ name: 'Login' })
+  else next();
+
+});
+
+export default router;
