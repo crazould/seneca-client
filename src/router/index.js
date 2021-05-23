@@ -18,7 +18,17 @@ const routes = [
         path: "dashboard",
         name: "Dashboard",
         component: () => import("../views/Home/Dashboard.vue")
-      }
+      },
+      {
+        path: "projectBoard",
+        name: "ProjectBoard",
+        component: () => import("../views/Home/ProjectBoard.vue")
+      },
+      {
+        path: "taskBoard",
+        name: "TaskBoard",
+        component: () => import("../views/Home/TaskBoard.vue")
+      },
     ]
   },
 ];

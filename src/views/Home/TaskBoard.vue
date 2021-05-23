@@ -1,16 +1,17 @@
-<template>
-  <div>
-    <h1>Dashboard</h1>
-   
-  </div>
+<template lang="">
+    <h1>
+       Task Board 
+    </h1>
 </template>
-
 <script>
 export default {
-  name: "Dashboard",
+  name: "TaskBoard",
   components: {},
   data: () => ({
     drawer: null,
   }),
 };
 </script>
+<style lang="">
+    
+</style>

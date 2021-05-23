@@ -21,7 +21,12 @@
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>
-              <router-link to="/login">logout</router-link>
+              <router-link to="/projectBoard">
+                Project Board
+              </router-link>
+              <router-link to="/login">
+                logout
+              </router-link>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -33,7 +38,7 @@
       <v-toolbar-title>Seneca</v-toolbar-title>
     </v-app-bar>
     <v-main>
-      <router-view/>
+      <router-view />
     </v-main>
   </v-app>
 </template>
