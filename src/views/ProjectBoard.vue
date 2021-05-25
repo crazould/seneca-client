@@ -3,7 +3,7 @@
     <h1>
       Project Board
     </h1>
-    <router-link to="/taskBoard">Task Board</router-link>
+    <router-link to="/task-board">Task Board</router-link>
   </div>
 </template>
 

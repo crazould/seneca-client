@@ -66,7 +66,7 @@ export default {
   name: "Login",
   methods: {
     login() {
-      this.$router.push({ path: "/dashboard" });
+      this.$router.push({ path: "/" });
     },
   },
 };

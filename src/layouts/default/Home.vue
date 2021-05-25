@@ -21,7 +21,7 @@
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>
-              <router-link to="/projectBoard">
+              <router-link to="/project-board">
                 Project Board
               </router-link>
               <router-link to="/login">
