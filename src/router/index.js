@@ -13,12 +13,15 @@ const routes = [
     route("TaskBoard", null, "task-board"),
 
   ]),
-
   {
     path: "/login",
     name: "Login",
-    component: () => import ("../views/Login.vue")
-  }
+    component: () => import("../views/Login.vue")
+  },
+  {
+    path: '*',
+    component: () => import('../views/404.vue'),
+  },
 ];
 
 const router = new VueRouter({
@@ -37,7 +40,6 @@ router.beforeEach((to, from, next) => {
   // set false for debugging
   // set true for development
   let isAuthenticated = true;
-
   if (to.name !== "Login" && !isAuthenticated) next({ name: "Login" });
   else return to.path.endsWith("/") ? next() : next(trailingSlash(to.path));
 });
