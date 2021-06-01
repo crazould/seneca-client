@@ -49,7 +49,7 @@ const mutations = make.mutations(state)
 
 const actions = {
   ...make.actions(state),
-  init: async ({ dispatch }) => {
+  init: async () => {
     //
   },
 }
