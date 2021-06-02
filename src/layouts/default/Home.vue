@@ -15,27 +15,33 @@
       <v-divider></v-divider>
 
       <v-list dense nav>
-        <v-list-item link>
+        <v-list-item>
+          <v-list-item-content>
+          <v-combobox 
+            v-model="selectedSemester" 
+            :items="semesters" 
+            label="Semester" 
+            outlined 
+            dense/>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item link @click="gotoProjectBoard()">
           <v-list-item-icon>
             <v-icon>mdi-pencil</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>
-              <router-link to="/project-board">
-                Project Board
-              </router-link>
+              Project Board
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item link @click="logout()">
           <v-list-item-icon>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>
-              <router-link to="/login">
-                logout
-              </router-link>
+              logout
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -55,11 +61,32 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: "Home",
   components: {},
   data: () => ({
     drawer: null,
+    semesters: [],
+    selectedSemester: null,
   }),
+  mounted() {
+    axios
+      .get("https://laboratory.binus.ac.id/lapi/api/Schedule/GetSemesters")
+      .then((data) => {
+        let semesters = data.data
+        this.semesters = semesters.map((e) => e.Description)
+        this.selectedSemester = this.semesters[0]
+      });
+  },
+  methods: {
+    logout() {
+      this.$router.push({ path: "/login" });
+    },
+    gotoProjectBoard() {
+      this.$router.push({ path: "/project-board" });
+    },
+  },
 };
 </script>
