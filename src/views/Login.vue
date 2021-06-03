@@ -17,7 +17,7 @@
                 fill-height
                 class="mx-5"
               >
-                <v-card-title width="100%" class="text-h2 mb-2">
+                <v-card-title width="100%" class="text-h1 mb-2">
                   Seneca
                 </v-card-title>
                 <v-card-subtitle>
