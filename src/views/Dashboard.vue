@@ -8,9 +8,7 @@
 export default {
   name: "Dashboard",
   components: {},
-
   data: () => ({
-    drawer: null,
   }),
 };
 </script>

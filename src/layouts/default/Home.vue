@@ -2,7 +2,7 @@
   <v-app>
     <v-navigation-drawer v-model="drawer" app>
       
-      <v-list-item link>
+      <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="text-h3 mb-2">
             Seneca
@@ -56,9 +56,16 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <!-- <v-toolbar-title>Seneca</v-toolbar-title> -->
+    <v-app-bar app >
+
+      <v-app-bar-nav-icon @click="toogleDrawer()">
+       <v-icon >
+         {{this.drawerIcon}}
+       </v-icon>
+      </v-app-bar-nav-icon>
+      <v-toolbar-title>
+        {{this.pageTitle}}
+      </v-toolbar-title>
     </v-app-bar>
 
     <v-main>
@@ -80,6 +87,8 @@ export default {
     drawer: null,
     semesters: [],
     selectedSemester: null,
+    pageTitle: 'Dashboard',
+    drawerIcon : 'mdi-menu'
   }),
   mounted() {
     axios
@@ -96,10 +105,23 @@ export default {
     },
     gotoProjectBoard() {
       this.$router.push({ path: "/project-board" });
+      this.pageTitle = 'Project Board'
     },
     gotoDashboard() {
       this.$router.push({ path: "/" });
+      this.pageTitle = 'Dashboard'
     },
+    toogleDrawer(){
+
+      this.drawer = !this.drawer
+      if(this.drawer){
+        this.drawerIcon = 'mdi-dots-vertical'
+      }
+      else {
+        this.drawerIcon = 'mdi-menu'
+      }
+
+    }
   },
 };
 </script>
