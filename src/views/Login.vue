@@ -26,32 +26,43 @@
                 <v-card-text>
                   <v-form>
                     <v-text-field
-                      clearable
                       outlined
                       dense
                       name="NIM"
                       label="NIM"
                       id="NIM"
                       type="text"
+                      required
+                      v-model="nim"
                     ></v-text-field>
                     <v-text-field
-                      clearable
                       outlined
                       dense
                       type="password"
                       name="Password"
                       label="Password"
                       id="Password"
+                      required
+                      v-model="password"
                     ></v-text-field>
                   </v-form>
                 </v-card-text>
                 <v-card-actions>
-                  <v-layout justify-center>
-                    <v-btn @click="login()" outlined tile>
+                    <v-btn
+                      @click="login()"
+                      outlined
+                      elevation="2"
+                      tile
+                      :loading="isLoading"
+                      @keypress.enter="login()"
+                    >
                       Login
                     </v-btn>
-                  </v-layout>
+                  <!-- </v-layout> -->
                 </v-card-actions>
+                <v-alert v-if="isError" type="error">
+                  {{ errorText }}
+                </v-alert>
               </v-layout>
             </v-card>
           </v-layout>
@@ -62,13 +73,43 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "Login",
+  data: () => ({
+    password: "",
+    nim: "",
+    isError: false,
+    isLoading: false,
+    errTxt: "",
+  }),
   methods: {
     login() {
-      this.$router.push({ path: "/" });
+
+      this.isLoading = true;
+      this.isError = false;
+
+      axios
+        .post("https://laboratory.binus.ac.id/lapi/api/Account/LogOnBinusian", {
+          username: this.nim,
+          password: this.password,
+        })
+        .then((r) => {
+          this.isLoading = false;
+          console.log(r.data);
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          // console.log(error);
+          this.isLoading = false;
+          this.isError = true;
+          if (error.response.status == 401) {
+            this.errorText = "Wrong NIM & password combination";
+          } else {
+            this.errorText = "Server under maintenace";
+          }
+        });
     },
   },
 };
 </script>
-<style></style>
