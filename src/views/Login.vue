@@ -48,16 +48,16 @@
                   </v-form>
                 </v-card-text>
                 <v-card-actions>
-                    <v-btn
-                      @click="login()"
-                      outlined
-                      elevation="2"
-                      tile
-                      :loading="isLoading"
-                      @keypress.enter="login()"
-                    >
-                      Login
-                    </v-btn>
+                  <v-btn
+                    @click="login()"
+                    outlined
+                    elevation="2"
+                    tile
+                    :loading="isLoading"
+                    @keypress.enter="login()"
+                  >
+                    Login
+                  </v-btn>
                   <!-- </v-layout> -->
                 </v-card-actions>
                 <v-alert v-if="isError" type="error">
@@ -85,7 +85,6 @@ export default {
   }),
   methods: {
     login() {
-
       this.isLoading = true;
       this.isError = false;
 
@@ -97,16 +96,20 @@ export default {
         .then((r) => {
           this.isLoading = false;
           console.log(r.data);
+          this.$session.start();
+          // this.$session.set("user", JSON.stringify(data.user));
+          // this.$router.push("/admin-home");
+
           this.$router.push("/");
         })
         .catch((error) => {
           // console.log(error);
           this.isLoading = false;
-          this.isError = true;
+          this.errTxt = true;
           if (error.response.status == 401) {
             this.errorText = "Wrong NIM & password combination";
           } else {
-            this.errorText = "Server under maintenace";
+            this.errorerrTxtText = "Server under maintenace";
           }
         });
     },

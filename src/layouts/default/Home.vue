@@ -84,7 +84,7 @@ export default {
   name: "Home",
   components: {},
   data: () => ({
-    drawer: null,
+    drawer: true,
     semesters: [],
     selectedSemester: null,
     pageTitle: 'Dashboard',
