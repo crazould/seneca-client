@@ -95,18 +95,18 @@ export default {
         })
         .then((r) => {
           this.isLoading = false;
-          console.log(r.data);
+          // console.log(r.data);
           this.$session.start();
-          // this.$session.set("user", JSON.stringify(data.user));
-          // this.$router.push("/admin-home");
-
+          this.$session.set("user", JSON.stringify(r.data));
+          // let currentUser = JSON.parse(this.$session.get("user"));
+          // console.log(currentUser);
           this.$router.push("/");
         })
         .catch((error) => {
           // console.log(error);
           this.isLoading = false;
           this.errTxt = true;
-          if (error.response.status == 401) {
+          if (error.status == 401) {
             this.errorText = "Wrong NIM & password combination";
           } else {
             this.errorerrTxtText = "Server under maintenace";

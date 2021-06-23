@@ -19,7 +19,6 @@ export function error (code = 404) {
 
 export function layout (layout = 'Default', children, path = '') {
   const dir = kebabCase(layout)
-
   return {
     children,
     component: () => import(

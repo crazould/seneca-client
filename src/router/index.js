@@ -7,11 +7,9 @@ Vue.use(VueRouter);
 
 const routes = [
   layout("Default", [
-
     route("Dashboard"),
     route("ProjectBoard", null, "project-board"),
     route("TaskBoard", null, "task-board"),
-
   ]),
   {
     path: "/login",

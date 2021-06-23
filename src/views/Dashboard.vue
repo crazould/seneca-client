@@ -8,7 +8,11 @@
 export default {
   name: "Dashboard",
   components: {},
-  data: () => ({
-  }),
+  data: () => ({}),
+  mounted() {
+    let user = this.$session.get("user");
+    let currentUser = JSON.parse(user);
+    console.log(currentUser);
+  },
 };
 </script>
