@@ -91,15 +91,23 @@ export default {
   mounted() {
     axios
       .get("https://laboratory.binus.ac.id/lapi/api/Schedule/GetSemesters")
-      .then((data) => {
-        let semesters = data.data;
-        this.semesters = semesters.map((e) => e.Description);
-        this.selectedSemester = this.semesters[0];
+      .then((r) => {
+
+        this.semesters = r.data.map((e) => {
+          return {
+            text: e.Description,
+            value: e.SemesterId,
+          }
+        });
+
+        this.selectedSemester = this.semesters[0].text;
+        this.$store.set("user/currSemesterId", this.semesters[0].value);
+        console.log(this.$store.get("user/currSemesterId"));
+        
       });
-    // let user = this.$session.get("user");
-    // let currentUser = JSON.parse(user);
-    // console.log(currentUser);
+ 
   },
+  computed: {},
   methods: {
     logout() {
       this.$session.destroy();

@@ -63,7 +63,6 @@
         './widgets/Search'
       ),
     },
-
     computed: {
       ...sync('app', [
         'drawer',
