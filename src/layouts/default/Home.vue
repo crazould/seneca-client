@@ -89,26 +89,26 @@ export default {
     drawerIcon: "mdi-menu",
   }),
   mounted() {
-    axios
-      .get("https://laboratory.binus.ac.id/lapi/api/Schedule/GetSemesters")
-      .then((r) => {
-
-        this.semesters = r.data.map((e) => {
-          return {
-            text: e.Description,
-            value: e.SemesterId,
-          }
-        });
-
-        this.selectedSemester = this.semesters[0].text;
-        this.$store.set("user/currSemesterId", this.semesters[0].value);
-        console.log(this.$store.get("user/currSemesterId"));
-        
-      });
- 
+    this.getSemesters();
   },
   computed: {},
   methods: {
+    getSemesters() {
+      axios
+        .get("https://laboratory.binus.ac.id/lapi/api/Schedule/GetSemesters")
+        .then( r => this.setSemesters(r) );
+    },
+    setSemesters(r) {
+          this.semesters = r.data.map((e) => {
+            return {
+              text: e.Description,
+              value: e.SemesterId,
+            };
+          });
+          this.selectedSemester = this.semesters[0].text;
+          this.$store.set("user/currSemesterId", this.semesters[0].value);
+          console.log(this.$store.get("user/currSemesterId"));
+    },
     logout() {
       this.$session.destroy();
       this.$router.push("/login");
