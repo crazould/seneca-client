@@ -46,7 +46,6 @@ export default {
   components: {
     DefaultAccount: () =>
       import(
-        /* webpackChunkName: "default-account" */
         "./widgets/Account"
       ),
     DefaultDrawerToggle: () =>
