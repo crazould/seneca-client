@@ -8,7 +8,7 @@ Vue.use(Vuetify, { directives: { ripple } })
 
 const theme = {
   primary: '#23d990',
-  secondary: '#9C27b0',
+  secondary: '#35495e',
   accent: '#e91e63',
   info: '#00CAE3',
   success: '#4CAF50',

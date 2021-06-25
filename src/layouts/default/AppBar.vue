@@ -10,23 +10,24 @@
     height="70"
     flat
   >
-    <v-app-bar-nav-icon
-      class="hidden-md-and-up"
-      @click="drawer = !drawer"
-    />
+    <v-app-bar-nav-icon class="hidden-md-and-up" @click="drawer = !drawer" />
 
     <default-drawer-toggle class="hidden-sm-and-down" />
 
-    <v-toolbar-title
-      class="font-weight-light text-h5"
-      v-text="name"
-    />
+    <v-toolbar-title class="font-weight-light text-h5" v-text="name" />
 
     <v-spacer />
 
-    <default-search class="hidden-sm-and-down" />
-
-    <default-go-home />
+    <v-combobox
+      v-model="selectedSemester"
+      :items="semesters"
+      label="Semester"
+      class="mt-8"
+      color="secondary"
+      style="max-width: 220px"
+      outlined
+      dense
+    />
 
     <default-notifications />
 
@@ -35,40 +36,58 @@
 </template>
 
 <script>
-  // Utilities
-  import { get, sync } from 'vuex-pathify'
+// Utilities
+import { get, sync } from "vuex-pathify";
+import axios from "axios";
 
-  export default {
-    name: 'DefaultBar',
+export default {
+  name: "DefaultBar",
 
-    components: {
-      DefaultAccount: () => import(
+  components: {
+    DefaultAccount: () =>
+      import(
         /* webpackChunkName: "default-account" */
-        './widgets/Account'
+        "./widgets/Account"
       ),
-      DefaultDrawerToggle: () => import(
+    DefaultDrawerToggle: () =>
+      import(
         /* webpackChunkName: "default-drawer-toggle" */
-        './widgets/DrawerToggle'
+        "./widgets/DrawerToggle"
       ),
-      DefaultGoHome: () => import(
-        /* webpackChunkName: "default-go-home" */
-        './widgets/GoHome'
-      ),
-      DefaultNotifications: () => import(
+    DefaultNotifications: () =>
+      import(
         /* webpackChunkName: "default-notifications" */
-        './widgets/Notifications'
+        "./widgets/Notifications"
       ),
-      DefaultSearch: () => import(
-        /* webpackChunkName: "default-search" */
-        './widgets/Search'
-      ),
+  },
+  data:() => ({
+    semesters: [],
+    selectedSemester: null,
+  }),
+  mounted() {
+    this.getSemesters();
+  },
+  computed: {
+    ...sync("app", ["drawer", "mini"]),
+    name: get("route/name"),
+  },
+  methods: {
+    getSemesters() {
+      axios
+        .get("https://laboratory.binus.ac.id/lapi/api/Schedule/GetSemesters")
+        .then((r) => this.setSemesters(r));
     },
-    computed: {
-      ...sync('app', [
-        'drawer',
-        'mini',
-      ]),
-      name: get('route/name'),
+    setSemesters(r) {
+      this.semesters = r.data.map((e) => {
+        return {
+          text: e.Description,
+          value: e.SemesterId,
+        };
+      });
+      this.selectedSemester = this.semesters[0].text;
+      this.$store.set("user/currSemesterId", this.semesters[0].value);
+      console.log(this.$store.get("user/currSemesterId"));
     },
-  }
+  },
+};
 </script>

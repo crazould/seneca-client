@@ -23,7 +23,7 @@ export function layout (layout = 'Default', children, path = '') {
     children,
     component: () => import(
       /* webpackChunkName: "layout-[request]" */
-      `@/layouts/${dir}/Home`
+      `@/layouts/${dir}/Index`
     ),
     path,
   }

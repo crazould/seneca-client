@@ -4,8 +4,8 @@ import { make } from 'vuex-pathify'
 // Data
 const state = {
   drawer: null,
-  drawerImage: true,
-  mini: false,
+  drawerImage: false,
+  mini: true,
   items: [
     {
       title: 'Dashboard',
@@ -13,35 +13,15 @@ const state = {
       to: '/',
     },
     {
-      title: 'User Profile',
-      icon: 'mdi-account',
-      to: '/components/profile/',
+      title: 'Project Board',
+      icon: 'mdi-pencil',
+      to: '/project-board',
     },
-    {
-      title: 'Regular Tables',
-      icon: 'mdi-clipboard-outline',
-      to: '/tables/regular/',
-    },
-    {
-      title: 'Typography',
-      icon: 'mdi-format-font',
-      to: '/components/typography/',
-    },
-    {
-      title: 'Icons',
-      icon: 'mdi-chart-bubble',
-      to: '/components/icons/',
-    },
-    {
-      title: 'Google Maps',
-      icon: 'mdi-map-marker',
-      to: '/maps/google/',
-    },
-    {
-      title: 'Notifications',
-      icon: 'mdi-bell',
-      to: '/components/notifications/',
-    },
+    // {
+    //   title: 'Notifications',
+    //   icon: 'mdi-bell',
+    //   to: '/components/notifications/',
+    // },
   ],
 }
 

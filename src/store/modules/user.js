@@ -6,15 +6,15 @@ import { IN_BROWSER } from '@/util/globals'
 
 const state = {
   dark: false,
-  currSemesterId: 'Masuk',
+  currSemesterId: '',
   drawer: {
     image: 0,
     gradient: 0,
     mini: false,
   },
   gradients: [
-    'rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)',
     'rgba(228, 226, 226, 1), rgba(255, 255, 255, 0.7)',
+    'rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)',
     'rgba(244, 67, 54, .8), rgba(244, 67, 54, .8)',
   ],
   images: [

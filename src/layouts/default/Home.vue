@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" app>
+    <!-- <v-navigation-drawer v-model="drawer" app>
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="text-h3 mb-2">
@@ -54,9 +54,13 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
 
-    <v-app-bar app>
+    <default-bar />
+
+    <default-drawer />
+
+    <!-- <v-app-bar app>
       <v-app-bar-nav-icon @click="toogleDrawer()">
         <v-icon>
           {{ this.drawerIcon }}
@@ -65,7 +69,7 @@
       <v-toolbar-title>
         {{ this.pageTitle }}
       </v-toolbar-title>
-    </v-app-bar>
+    </v-app-bar> -->
 
     <v-main>
       <v-fade-transition mode="out-in">
@@ -80,7 +84,18 @@ import axios from "axios";
 
 export default {
   name: "Home",
-  components: {},
+  components: {
+    DefaultBar: () =>
+      import(
+        /* webpackChunkName: "default-app-bar" */
+        "./AppBar"
+      ),
+    DefaultDrawer: () =>
+      import(
+        /* webpackChunkName: "default-drawer" */
+        "./Drawer"
+      ),
+  },
   data: () => ({
     drawer: true,
     semesters: [],
@@ -96,18 +111,18 @@ export default {
     getSemesters() {
       axios
         .get("https://laboratory.binus.ac.id/lapi/api/Schedule/GetSemesters")
-        .then( r => this.setSemesters(r) );
+        .then((r) => this.setSemesters(r));
     },
     setSemesters(r) {
-          this.semesters = r.data.map((e) => {
-            return {
-              text: e.Description,
-              value: e.SemesterId,
-            };
-          });
-          this.selectedSemester = this.semesters[0].text;
-          this.$store.set("user/currSemesterId", this.semesters[0].value);
-          console.log(this.$store.get("user/currSemesterId"));
+      this.semesters = r.data.map((e) => {
+        return {
+          text: e.Description,
+          value: e.SemesterId,
+        };
+      });
+      this.selectedSemester = this.semesters[0].text;
+      this.$store.set("user/currSemesterId", this.semesters[0].value);
+      console.log(this.$store.get("user/currSemesterId"));
     },
     logout() {
       this.$session.destroy();
