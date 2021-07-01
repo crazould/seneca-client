@@ -14,17 +14,17 @@
 
     <default-drawer-toggle class="hidden-sm-and-down" />
 
-    <v-toolbar-title class="font-weight-light text-h5" v-text="name" />
+    <v-toolbar-title class="font-weight-light text-h5" v-text="pageName" />
 
     <v-spacer />
 
     <v-combobox
-      v-model="selectedSemester"
+      v-model="currSemester"
       :items="semesters"
       label="Semester"
       class="mt-8"
       color="secondary"
-      style="max-width: 220px"
+      style="max-width: 240px"
       outlined
       dense
     />
@@ -50,25 +50,23 @@ export default {
       ),
     DefaultDrawerToggle: () =>
       import(
-        /* webpackChunkName: "default-drawer-toggle" */
         "./widgets/DrawerToggle"
       ),
     DefaultNotifications: () =>
       import(
-        /* webpackChunkName: "default-notifications" */
         "./widgets/Notifications"
       ),
   },
   data:() => ({
     semesters: [],
-    selectedSemester: null,
   }),
   mounted() {
     this.getSemesters();
   },
   computed: {
     ...sync("app", ["drawer", "mini"]),
-    name: get("route/name"),
+    ...sync("user", ["currSemester", "dark"]),
+    pageName: get("route/name"),
   },
   methods: {
     getSemesters() {
@@ -83,9 +81,7 @@ export default {
           value: e.SemesterId,
         };
       });
-      this.selectedSemester = this.semesters[0].text;
-      this.$store.set("user/currSemesterId", this.semesters[0].value);
-      console.log(this.$store.get("user/currSemesterId"));
+      this.$store.set("user/currSemester", this.semesters[0])
     },
   },
 };

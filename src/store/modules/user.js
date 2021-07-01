@@ -6,7 +6,7 @@ import { IN_BROWSER } from '@/util/globals'
 
 const state = {
   dark: false,
-  currSemesterId: '',
+  currSemester: '',
   drawer: {
     image: 0,
     gradient: 0,

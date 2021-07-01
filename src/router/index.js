@@ -8,8 +8,8 @@ Vue.use(VueRouter);
 const routes = [
   layout("Default", [
     route("Dashboard"),
-    route("ProjectBoard", null, "project-board"),
-    route("TaskBoard", null, "task-board"),
+    route("Project Board", null, "project-board"),
+    route("Task Board", null, "task-board"),
   ]),
   {
     path: "/login",
