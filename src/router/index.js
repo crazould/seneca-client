@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { trailingSlash } from "@/util/helpers";
+// import { trailingSlash } from "@/util/helpers";
 import { layout, route } from "@/util/routes";
 
 Vue.use(VueRouter);
@@ -33,13 +33,13 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  // use isAuthenticated for debugging
-  // set false for debugging
-  // set true for development
-  let isAuthenticated = true;
-  if (to.name !== "Login" && !isAuthenticated) next({ name: "Login" });
-  else return to.path.endsWith("/") ? next() : next(trailingSlash(to.path));
-});
+// router.beforeEach((to, from, next) => {
+//   // use isAuthenticated for debugging
+//   // set false for debugging
+//   // set true for development
+//   let isAuthenticated = true;
+//   if (to.name !== "Login" && !isAuthenticated) next({ name: "Login" });
+//   else return to.path.endsWith("/") ? next() : next(trailingSlash(to.path));
+// });
 
 export default router;

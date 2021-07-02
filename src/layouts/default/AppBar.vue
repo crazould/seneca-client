@@ -17,7 +17,6 @@
     <v-toolbar-title class="font-weight-light text-h5" v-text="pageName" />
 
     <v-spacer />
-
     <v-combobox
       v-model="currSemester"
       :items="semesters"
@@ -28,9 +27,7 @@
       outlined
       dense
     />
-
     <default-notifications />
-
     <default-account />
   </v-app-bar>
 </template>
@@ -44,20 +41,11 @@ export default {
   name: "DefaultBar",
 
   components: {
-    DefaultAccount: () =>
-      import(
-        "./widgets/Account"
-      ),
-    DefaultDrawerToggle: () =>
-      import(
-        "./widgets/DrawerToggle"
-      ),
-    DefaultNotifications: () =>
-      import(
-        "./widgets/Notifications"
-      ),
+    DefaultAccount: () => import("./widgets/Account"),
+    DefaultDrawerToggle: () => import("./widgets/DrawerToggle"),
+    DefaultNotifications: () => import("./widgets/Notifications"),
   },
-  data:() => ({
+  data: () => ({
     semesters: [],
   }),
   mounted() {
@@ -67,6 +55,12 @@ export default {
     ...sync("app", ["drawer", "mini"]),
     ...sync("user", ["currSemester", "dark"]),
     pageName: get("route/name"),
+  },
+  watch: {
+    currSemester(newValue){
+      this.$store.set("user/currSemester", newValue);
+      console.log(`new value: ${newValue.value} new text: ${newValue.text}` )
+    }
   },
   methods: {
     getSemesters() {
@@ -81,7 +75,11 @@ export default {
           value: e.SemesterId,
         };
       });
-      this.$store.set("user/currSemester", this.semesters[0])
+      this.$store.set("user/currSemester", this.semesters[0]);
+    },
+    logout() {
+      this.$session.destroy();
+      this.$router.push("/login");
     },
   },
 };

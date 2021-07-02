@@ -45,12 +45,10 @@ export default {
   components: {
     DefaultDrawerHeader: () =>
       import(
-        /* webpackChunkName: "default-drawer-header" */
         "./widgets/DrawerHeader"
       ),
     DefaultList: () =>
       import(
-        /* webpackChunkName: "default-list" */
         "./List"
       ),
   },

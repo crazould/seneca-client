@@ -18,7 +18,6 @@
         <v-icon>mdi-account</v-icon>
       </v-btn>
     </template>
-
     <v-list
       :tile="false"
       flat
@@ -49,9 +48,7 @@
 
     data: () => ({
       profile: [
-        { title: 'Profile' },
         { title: 'Settings' },
-        { divider: true },
         { title: 'Log out' },
       ],
     }),
