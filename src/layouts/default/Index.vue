@@ -6,7 +6,6 @@
 
     <default-view />
 
-    <default-settings />
   </v-app>
 </template>
 
@@ -22,10 +21,6 @@
       DefaultDrawer: () => import(
         /* webpackChunkName: "default-drawer" */
         './Drawer'
-      ),
-      DefaultSettings: () => import(
-        /* webpackChunkName: "default-settings" */
-        './Settings'
       ),
       DefaultView: () => import(
         /* webpackChunkName: "default-view" */
