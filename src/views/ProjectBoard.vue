@@ -4,11 +4,10 @@
       Project Board
     </h1>
 
-    <h3 v-if="courses.length === 0">
-      you don't have any courses in current semester 😅
+    <h3 v-text="message">
     </h3>
 
-    <v-list v-else v-for="(course, index) in courses" :key="index">
+    <v-list v-for="(course, index) in courses" :key="index">
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title v-text="course.subject.Subject" />
@@ -32,38 +31,36 @@ export default {
   components: {},
   data: () => ({
     courses: [],
+    message: "you don't have any courses in current semester 😅"
   }),
   computed: {
     ...sync("user", ["currSemester"]),
   },
   watch: {
     currSemester(newSemester) {
-      this.getCourses(newSemester)
+      this.getCourses(newSemester);
     },
   },
   created() {},
   methods: {
     getCourses(newSemester) {
       const user = JSON.parse(this.$session.get("user"));
-      // console.log(user);
-      // console.log(`username: ${user.User.UserName}`);
-      // console.log(`token: ${user.Token.token}`);
-      // console.log(`semester: ${this.currSemester.value}`);
-      console.log("loading . . .");
-      const headers = {
-        headers: {
-          Authorization: `Bearer ${user.Token.token}`,
-        },
-      };
+      this.message = "Loading . . . "
       axios
         .get(
           `https://laboratory.binus.ac.id/lapi/api/Binusmaya/GetStudentSubjectsInSemesterWithGroup?semesterId=${newSemester.value}&binusianNumber=${user.User.UserName}`,
-          headers
+          {
+            headers: {
+              Authorization: `Bearer ${user.Token.token}`,
+            },
+          }
         )
         .then((res) => {
           console.log(res.data);
           this.courses = res.data;
-          console.log("finish!");
+          this.message = this.courses.length === 0 ? 
+          "you don't have any courses in current semester 😅" :
+          ""
         })
         .catch((error) => {
           console.log(error);

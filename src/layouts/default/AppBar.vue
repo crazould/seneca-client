@@ -56,12 +56,6 @@ export default {
     ...sync("user", ["currSemester", "dark"]),
     pageName: get("route/name"),
   },
-  watch: {
-    currSemester(newValue){
-      this.$store.set("user/currSemester", newValue);
-      console.log(`new value: ${newValue.value} new text: ${newValue.text}` )
-    }
-  },
   methods: {
     getSemesters() {
       axios
@@ -69,7 +63,10 @@ export default {
         .then((r) => this.setSemesters(r));
     },
     setSemesters(r) {
-      this.semesters = r.data.map((e) => {
+      this.semesters = r.data
+      this.semesters = r.data.filter((e) => {
+        return !e.Description.includes("BCA")
+     }).map((e) => {
         return {
           text: e.Description,
           value: e.SemesterId,
