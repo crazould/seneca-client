@@ -56,7 +56,7 @@ export default {
           }
         )
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           this.courses = res.data;
           this.message = this.courses.length === 0 ? 
           "you don't have any courses in current semester 😅" :

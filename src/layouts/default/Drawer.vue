@@ -46,12 +46,6 @@ export default {
     ...get("app", ["items", "version"]),
     ...sync("app", ["drawer", "drawerImage", "mini"]),
   },
-  methods: {
-    logout() {
-      this.$session.destroy();
-      this.$router.push("/login");
-    },
-  },
 };
 </script>
 

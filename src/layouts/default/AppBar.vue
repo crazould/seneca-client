@@ -28,9 +28,7 @@
       dense
     />
     <default-notifications />
-    <template>
       <v-menu
-        v-model="$vuetify.theme.dark"
         bottom
         left
         min-width="200"
@@ -38,14 +36,16 @@
         origin="top right"
       >
         <template v-slot:activator="{ attrs, on }">
-          <v-btn class="ml-2" min-width="0" text v-bind="attrs" v-on="on">
-            <v-icon v-if="$vuetify.theme.dark">mdi-moon-waning-crescent</v-icon>
-            <v-icon v-else>mdi-white-balance-sunny</v-icon>
+          <v-btn
+           @click="$vuetify.theme.dark = !$vuetify.theme.dark "
+           class="ml-2" min-width="0" text v-bind="attrs" v-on="on">
+            <v-icon>
+              {{ $vuetify.theme.dark ? 'mdi-moon-waning-crescent' : 'mdi-white-balance-sunny' }}
+            </v-icon>
           </v-btn>
         </template>
       </v-menu>
       <default-account />
-    </template>
   </v-app-bar>
 </template>
 
