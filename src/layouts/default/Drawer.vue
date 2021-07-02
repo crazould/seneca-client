@@ -20,17 +20,6 @@
       <default-list :items="items" />
     </div>
 
-    <template #append>
-      <div class="pa-4 text-center">
-        <app-btn block class="text-none" color="primary" @click="logout()">
-          <v-icon left>
-            mdi-logout
-          </v-icon>
-          Logout
-        </app-btn>
-      </div>
-    </template>
-    <div class="pt-12" />
   </v-navigation-drawer>
 </template>
 
