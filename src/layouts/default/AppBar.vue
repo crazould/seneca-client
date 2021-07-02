@@ -28,7 +28,24 @@
       dense
     />
     <default-notifications />
-    <default-account />
+    <template>
+      <v-menu
+        v-model="$vuetify.theme.dark"
+        bottom
+        left
+        min-width="200"
+        offset-y
+        origin="top right"
+      >
+        <template v-slot:activator="{ attrs, on }">
+          <v-btn class="ml-2" min-width="0" text v-bind="attrs" v-on="on">
+            <v-icon v-if="$vuetify.theme.dark">mdi-moon-waning-crescent</v-icon>
+            <v-icon v-else>mdi-white-balance-sunny</v-icon>
+          </v-btn>
+        </template>
+      </v-menu>
+      <default-account />
+    </template>
   </v-app-bar>
 </template>
 
@@ -63,20 +80,18 @@ export default {
         .then((r) => this.setSemesters(r));
     },
     setSemesters(r) {
+      this.semesters = r.data;
       this.semesters = r.data
-      this.semesters = r.data.filter((e) => {
-        return !e.Description.includes("BCA")
-     }).map((e) => {
-        return {
-          text: e.Description,
-          value: e.SemesterId,
-        };
-      });
+        .filter((e) => {
+          return !e.Description.includes("BCA");
+        })
+        .map((e) => {
+          return {
+            text: e.Description,
+            value: e.SemesterId,
+          };
+        });
       this.$store.set("user/currSemester", this.semesters[0]);
-    },
-    logout() {
-      this.$session.destroy();
-      this.$router.push("/login");
     },
   },
 };

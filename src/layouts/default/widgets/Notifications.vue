@@ -20,7 +20,7 @@
           overlap
         >
           <template v-slot:badge>
-            <span>5</span>
+            <span>{{notifications.length}}</span>
           </template>
 
           <v-icon>mdi-bell</v-icon>
@@ -48,14 +48,11 @@
 <script>
   export default {
     name: 'DefaultNotifications',
-
     data: () => ({
       notifications: [
-        'Mike John Responded to your email',
-        'You have 5 new tasks',
-        'You\'re now friends with Andrew',
-        'Another Notification',
-        'Another one',
+        'Makan bang',
+        'Minum bang',
+        'Tidur bang',
       ],
     }),
   }

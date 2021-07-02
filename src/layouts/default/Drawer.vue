@@ -17,7 +17,6 @@
     <div class="px-2">
       <default-drawer-header />
       <v-divider class="mx-3 mb-2" />
-     
       <default-list :items="items" />
     </div>
 
