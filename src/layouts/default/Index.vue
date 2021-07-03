@@ -15,15 +15,12 @@
 
     components: {
       DefaultBar: () => import(
-        /* webpackChunkName: "default-app-bar" */
         './AppBar'
       ),
       DefaultDrawer: () => import(
-        /* webpackChunkName: "default-drawer" */
         './Drawer'
       ),
       DefaultView: () => import(
-        /* webpackChunkName: "default-view" */
         './View'
       ),
     },

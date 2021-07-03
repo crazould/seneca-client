@@ -7,6 +7,10 @@
     <h3 v-text="message">
     </h3>
 
+    <p v-if="message.length === 0">
+      Please form a group in bluejack website first, before proceeding to manage your project here
+    </p>
+
     <v-list v-for="(course, index) in courses" :key="index">
       <v-list-item>
         <v-list-item-content>
@@ -46,6 +50,7 @@ export default {
     getCourses(newSemester) {
       const user = JSON.parse(this.$session.get("user"));
       this.message = "Loading . . . "
+      // console.log(newSemester.value)
       axios
         .get(
           `https://laboratory.binus.ac.id/lapi/api/Binusmaya/GetStudentSubjectsInSemesterWithGroup?semesterId=${newSemester.value}&binusianNumber=${user.User.UserName}`,
@@ -57,7 +62,10 @@ export default {
         )
         .then((res) => {
           // console.log(res.data);
-          this.courses = res.data;
+          this.courses = res.data.filter((e) => {
+            return e.group !== null && e.group.Status !== "none"
+          });
+
           this.message = this.courses.length === 0 ? 
           "you don't have any courses in current semester 😅" :
           ""
