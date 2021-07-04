@@ -35,7 +35,7 @@ export default {
   components: {},
   data: () => ({
     courses: [],
-    message: "you don't have any courses in current semester 😅"
+    message: "you don't have any project in current semester 😅"
   }),
   computed: {
     ...sync("user", ["currSemester"]),
@@ -45,7 +45,9 @@ export default {
       this.getCourses(newSemester);
     },
   },
-  created() {},
+  mounted() {
+    this.getCourses(this.currSemester)
+  },
   methods: {
     getCourses(newSemester) {
       const user = JSON.parse(this.$session.get("user"));
@@ -67,7 +69,7 @@ export default {
           });
 
           this.message = this.courses.length === 0 ? 
-          "you don't have any courses in current semester 😅" :
+          "you don't have any project in current semester 😅" :
           ""
         })
         .catch((error) => {
