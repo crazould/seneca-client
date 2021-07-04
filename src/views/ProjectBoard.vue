@@ -1,15 +1,22 @@
 <template>
   <div>
-    <h1>
-      Project Board
-    </h1>
+    <v-progress-linear
+      :active="isLoading"
+      :indeterminate="isLoading"
+      absolute
+      top
+    ></v-progress-linear>
 
-    <h3 v-text="message">
-    </h3>
-
-    <p v-if="message.length === 0">
-      Please form a group in bluejack website first, before proceeding to manage your project here
-    </p>
+    <v-alert
+      border="left"
+      text
+      type="info"
+      colored-border
+      v-if="message != ''"
+      dismissible
+    >
+    {{message}}
+    </v-alert>
 
     <v-list v-for="(course, index) in courses" :key="index">
       <v-list-item>
@@ -35,7 +42,8 @@ export default {
   components: {},
   data: () => ({
     courses: [],
-    message: "you don't have any project in current semester 😅"
+    isLoading: false,
+    message: "",
   }),
   computed: {
     ...sync("user", ["currSemester"]),
@@ -46,12 +54,12 @@ export default {
     },
   },
   mounted() {
-    this.getCourses(this.currSemester)
+    this.getCourses(this.currSemester);
   },
   methods: {
     getCourses(newSemester) {
       const user = JSON.parse(this.$session.get("user"));
-      this.message = "Loading . . . "
+      this.isLoading = true;
       // console.log(newSemester.value)
       axios
         .get(
@@ -65,16 +73,18 @@ export default {
         .then((res) => {
           // console.log(res.data);
           this.courses = res.data.filter((e) => {
-            return e.group !== null && e.group.Status !== "none"
+            return e.group !== null && e.group.Status !== "none";
           });
 
-          this.message = this.courses.length === 0 ? 
-          "you don't have any project in current semester 😅" :
-          ""
+          this.message =
+            this.courses.length === 0
+              ? "You don't have any project in current semester 😅"
+              : "Please form a group in bluejack website first, before proceeding to manage your project here";
         })
         .catch((error) => {
           console.log(error);
-        });
+        })
+        .finally(() => (this.isLoading = false));
     },
   },
 };
