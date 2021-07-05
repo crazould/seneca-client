@@ -2,7 +2,7 @@
   <v-app>
     <v-container fluid style="width:100vw; padding: 0;" class="white">
       <v-row no-gutters>
-        <v-col xl="10" align-self="center" md="8" sm="7">
+        <v-col xl="10" align-self="center" md="9" sm="8">
           <v-img src="../assets/bgr.svg" contain />
         </v-col>
         <v-col >
@@ -22,7 +22,7 @@
               <v-card-title width="100%" class="text-h1 mb-2">
                 Seneca
               </v-card-title>
-              <v-card-subtitle>
+              <v-card-subtitle class="text-center">
                 Laboratory Project Management Tool
               </v-card-subtitle>
               <v-card-text>
