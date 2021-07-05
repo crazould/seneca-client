@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-progress-linear
       :active="isLoading"
       :indeterminate="isLoading"
@@ -56,7 +56,6 @@ export default {
     courses: [],
     isLoading: false,
     message: "",
-    totalCol: 3
   }),
   computed: {
     ...sync("user", ["currSemester"]),
@@ -93,33 +92,17 @@ export default {
             return e.group !== null && e.group.Status !== "none";
           });
 
+
+          // Uncomment this to debugging the UI of Project Component
           // let temp = this.courses;
-
           // temp.forEach((element) => {
           //   this.courses.push(element);
           // });
-
           // temp.forEach((element) => {
           //   this.courses.push(element);
           // });
-
-          console.log(this.courses);
-
-          // let courseRow = [];
-          // let courseCol = [];
-
-          // let count = 0;
-          // this.courses.forEach((e) => {
-          //   if (count != this.totalCol) {
-          //     courseCol.push(e);
-          //     count++;
-          //   } else {
-          //     courseRow.push(courseCol);
-          //     count = 0;
-          //   }
-          // });
-
-          // this.courses = courseRow;
+          // console.log(this.courses);
+          // this.courses = temp;
 
           this.message =
             this.courses.length === 0
