@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <v-progress-linear
       :active="isLoading"
       :indeterminate="isLoading"
@@ -7,7 +7,7 @@
       top
     ></v-progress-linear>
 
-    <v-alert
+    <material-alert
       border="left"
       text
       type="info"
@@ -15,35 +15,48 @@
       v-if="message != ''"
       dismissible
     >
-    {{message}}
-    </v-alert>
+      {{ message }}
+    </material-alert>
 
-    <v-list v-for="(course, index) in courses" :key="index">
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title v-text="course.subject.Subject" />
-          <v-list-item-subtitle v-text="course.subject.Class" />
-          <v-list-item-subtitle v-text="course.subject.Shift" />
-        </v-list-item-content>
-      </v-list-item>
-    </v-list>
-
-    <router-link to="/task-board">
-      Task Board
-    </router-link>
-  </div>
+    <v-row v-for="(course, index) in courses" :key="index">
+      <v-col>
+        <v-card min-height="180">
+          <v-card-title class="font-weight-light text-h3" >
+            {{ course.subject.Subject }}
+          </v-card-title>
+          <v-card-subtitle >
+            {{ course.subject.Class }}
+          </v-card-subtitle>
+          <v-card-actions>
+            <v-btn
+              :color="$vuetify.theme.themes.dark.primary"
+              link
+              to="/task-board"
+              class="white--text"
+              absolute
+              bottom
+            >
+              Manage Project
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import axios from "axios";
 import { sync } from "vuex-pathify";
+import MaterialAlert from "../components/MaterialAlert.vue";
 export default {
   name: "ProjectBoard",
-  components: {},
+  components: { MaterialAlert },
   data: () => ({
     courses: [],
     isLoading: false,
     message: "",
+    totalCol: 3
   }),
   computed: {
     ...sync("user", ["currSemester"]),
@@ -58,8 +71,12 @@ export default {
   },
   methods: {
     getCourses(newSemester) {
+      if (newSemester.value == undefined) return;
+
       const user = JSON.parse(this.$session.get("user"));
       this.isLoading = true;
+      this.courses = 0
+      this.message = ''
       // console.log(newSemester.value)
       axios
         .get(
@@ -76,10 +93,38 @@ export default {
             return e.group !== null && e.group.Status !== "none";
           });
 
+          // let temp = this.courses;
+
+          // temp.forEach((element) => {
+          //   this.courses.push(element);
+          // });
+
+          // temp.forEach((element) => {
+          //   this.courses.push(element);
+          // });
+
+          console.log(this.courses);
+
+          // let courseRow = [];
+          // let courseCol = [];
+
+          // let count = 0;
+          // this.courses.forEach((e) => {
+          //   if (count != this.totalCol) {
+          //     courseCol.push(e);
+          //     count++;
+          //   } else {
+          //     courseRow.push(courseCol);
+          //     count = 0;
+          //   }
+          // });
+
+          // this.courses = courseRow;
+
           this.message =
             this.courses.length === 0
               ? "You don't have any project in current semester 😅"
-              : "Please form a group in bluejack website first, before proceeding to manage your project here";
+              : "Please form a group in bluejack website first, before proceed to manage your project here.";
         })
         .catch((error) => {
           console.log(error);

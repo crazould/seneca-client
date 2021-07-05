@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <v-container fluid>
     <h1>Dashboard</h1>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -9,10 +9,6 @@ export default {
   name: "Dashboard",
   components: {},
   data: () => ({}),
-  mounted() {
-    // let user = this.$session.get("user");
-    // let currentUser = JSON.parse(user);
-    // console.log(currentUser);
-  },
+  mounted() {},
 };
 </script>
