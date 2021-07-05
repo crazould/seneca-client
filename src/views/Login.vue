@@ -1,74 +1,74 @@
 <template>
   <v-app>
-    <v-main>
-      <v-card>
-        <v-img src="../assets/bgr.webp" height="100vh">
-          <v-layout justify-end>
-            <v-card
-              max-width="380px"
-              width="380px"
-              height="100vh"
-              :dark="false"
+    <v-container fluid style="width:100vw; padding: 0;" class="white">
+      <v-row no-gutters>
+        <v-col xl="10" align-self="center" md="8" sm="7">
+          <v-img src="../assets/bgr.svg" contain />
+        </v-col>
+        <v-col >
+          <v-card
+            height="100vh"
+            :dark="false"
+            absolute
+            right
+          >
+            <v-layout
+              column
+              align-center
+              justify-center
+              fill-height
+              class="mx-5"
             >
-              <v-layout
-                column
-                align-center
-                justify-center
-                fill-height
-                class="mx-5"
-              >
-                <v-card-title width="100%" class="text-h1 mb-2">
-                  Seneca
-                </v-card-title>
-                <v-card-subtitle>
-                  Laboratory Project Management Tool
-                </v-card-subtitle>
-                <v-card-text>
-                  <v-form>
-                    <v-text-field
-                      outlined
-                      dense
-                      name="NIM"
-                      label="NIM"
-                      id="NIM"
-                      type="text"
-                      required
-                      v-model="nim"
-                    ></v-text-field>
-                    <v-text-field
-                      outlined
-                      dense
-                      type="password"
-                      name="Password"
-                      label="Password"
-                      id="Password"
-                      required
-                      v-model="password"
-                    ></v-text-field>
-                  </v-form>
-                </v-card-text>
-                <v-card-actions>
-                  <v-btn
-                    @click="login()"
+              <v-card-title width="100%" class="text-h1 mb-2">
+                Seneca
+              </v-card-title>
+              <v-card-subtitle>
+                Laboratory Project Management Tool
+              </v-card-subtitle>
+              <v-card-text>
+                <v-form>
+                  <v-text-field
                     outlined
-                    elevation="2"
-                    tile
-                    :loading="isLoading"
-                    @keypress.enter="login()"
-                  >
-                    Login
-                  </v-btn>
-                  <!-- </v-layout> -->
-                </v-card-actions>
-                <v-alert v-if="isError" type="error">
-                  {{ errorText }}
-                </v-alert>
-              </v-layout>
-            </v-card>
-          </v-layout>
-        </v-img>
-      </v-card>
-    </v-main>
+                    dense
+                    name="NIM"
+                    label="NIM"
+                    id="NIM"
+                    type="text"
+                    required
+                    v-model="nim"
+                  ></v-text-field>
+                  <v-text-field
+                    outlined
+                    dense
+                    type="password"
+                    name="Password"
+                    label="Password"
+                    id="Password"
+                    required
+                    v-model="password"
+                  ></v-text-field>
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn
+                  @click="login()"
+                  outlined
+                  elevation="2"
+                  tile
+                  :loading="isLoading"
+                  @keypress.enter="login()"
+                >
+                  Login
+                </v-btn>
+              </v-card-actions>
+              <v-alert v-if="isError" type="error">
+                {{ errorText }}
+              </v-alert>
+            </v-layout>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-app>
 </template>
 
