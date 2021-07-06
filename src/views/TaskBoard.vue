@@ -4,22 +4,44 @@
       {{ currCourse.subject.Subject }}
     </div>
 
-    <v-btn type="info"
-      >Create
-      {{ subject.Tasks === undefined ? "Backlog" : "Sprint" }}</v-btn
-    >
+    <v-btn type="info">Create New Phase</v-btn>
 
-    <v-list v-if="subject.Tasks !== undefined" dense class="mt-5">
-      <v-subheader class="display-2">Backlog</v-subheader>
-      <v-list-item-group color="primary">
-        <v-list-item v-for="(task, index) in subject.Tasks" :key="index">
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ task.Name }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item-group>
+    <v-list v-if="group !== null" class="mt-5">
+      <v-list-group
+        v-for="(phase, i) in group.Phases"
+        :value="true"
+        :key="i"
+        :color="$vuetify.theme.themes.dark.info"
+      >
+        <template v-slot:activator>
+          <v-list-item-title>{{ phase.Name }}</v-list-item-title>
+        </template>
+
+        <v-list-group
+          v-for="(category, j) in phase.Category"
+          :key="j"
+          :value="true"
+          sub-group
+          no-action
+          :color="$vuetify.theme.themes.dark.info"
+        >
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title>{{ category.Name }}</v-list-item-title>
+            </v-list-item-content>
+          </template>
+          <v-list-item v-for="(task, k) in category.Tasks" :key="k">
+            <v-list-item-content>
+              <v-list-item-title v-text="task.Name"></v-list-item-title>
+              <v-list-item-subtitle
+                v-text="task.DueDate"
+              ></v-list-item-subtitle>
+
+              {{ task.Priority }}
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+      </v-list-group>
     </v-list>
   </v-container>
 </template>
@@ -34,23 +56,25 @@ export default {
     ...sync("user", ["currCourse"]),
   },
   data: () => ({
-    subject: {},
+    group: null,
   }),
   mounted() {
-    this.getSubject();
+    // this.getSubject();
+    this.getGroupDetail();
   },
   methods: {
-    getSubject() {
+    getGroupDetail() {
       console.log(this.currCourse.subject.ClassTransactionId);
+      console.log(this.currCourse.group.Group.GroupNumber);
       window.Database.ref(
-        "Subjects/" + this.currCourse.subject.ClassTransactionId
+        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}`
       ).on("value", (s) => {
-        this.subject = [];
-        const data = s.val();
-        console.log(data);
-        this.subject = data;
+        this.group = [];
+        this.group = s.val();
+        console.log(this.group);
       });
     },
+    setPhase() {},
   },
 };
 </script>
