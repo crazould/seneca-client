@@ -2,8 +2,8 @@
   <v-app>
     <v-container fluid style="width:100vw; padding: 0;" class="white">
       <v-row no-gutters>
-        <v-col xl="10" align-self="center" md="9" sm="8">
-          <v-img src="../assets/bgr.svg" contain />
+        <v-col xl="10" class="justify-center align-center d-none d-sm-flex" md="9" sm="8" >
+          <v-img class="d-none d-sm-flex" src="../assets/Data-analyse.svg" max-height="800" contain/>
         </v-col>
         <v-col >
           <v-card
