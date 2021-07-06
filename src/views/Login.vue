@@ -87,7 +87,6 @@ export default {
     login() {
       this.isLoading = true;
       this.isError = false;
-
       axios
         .post("https://laboratory.binus.ac.id/lapi/api/Account/LogOnBinusian", {
           username: this.nim,

@@ -36,7 +36,7 @@
       >
         <template v-slot:activator="{ attrs, on }">
           <v-btn
-           @click="$vuetify.theme.dark = !$vuetify.theme.dark "
+           @click="toggleTheme()"
            class="ml-2" min-width="0" text v-bind="attrs" v-on="on">
             <v-icon>
               {{ $vuetify.theme.dark ? 'mdi-moon-waning-crescent' : 'mdi-white-balance-sunny' }}
@@ -92,6 +92,10 @@ export default {
         });
       this.$store.set("user/currSemester", this.semesters[0]);
     },
+    toggleTheme(){
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      this.$store.set('user/dark', this.$vuetify.theme.dark)
+    }
   },
 };
 </script>
