@@ -77,7 +77,8 @@ export default {
       this.isLoading = true;
       this.courses = 0
       this.message = ''
-      console.log(newSemester.value)
+      // console.log(newSemester.value)
+      // console.log(user.Token.token)
       axios
         .get(
           `https://laboratory.binus.ac.id/lapi/api/Binusmaya/GetStudentSubjectsInSemesterWithGroup?semesterId=${newSemester.value}&binusianNumber=${user.User.UserName}`,
@@ -101,7 +102,7 @@ export default {
           // temp.forEach((element) => {
           //   this.courses.push(element);
           // });
-          console.log(this.courses);
+          // console.log(this.courses);
           // this.courses = temp;
 
           this.message =
@@ -115,7 +116,7 @@ export default {
         .finally(() => (this.isLoading = false));
     },
     setCurrCourse(course){
-      console.log(course)
+      // console.log(course)
       this.$store.set('user/currCourse', course)
     }
   },
