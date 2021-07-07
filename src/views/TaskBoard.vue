@@ -6,8 +6,14 @@
 
     <v-dialog v-model="phaseDialog" max-width="500">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="primary" text v-bind="attrs" v-on="on" @click="setPhase()"
-          >Create New Phase</v-btn
+        <v-btn
+          class="mr-5"
+          color="primary"
+          dense
+          outlined
+          v-bind="attrs"
+          v-on="on"
+          >Add New Phase</v-btn
         >
       </template>
 
@@ -16,7 +22,7 @@
           class="display-2 font-weight-light white--text"
           style="background-color: #0090D1"
         >
-          Create new phase
+          Add new phase
         </v-card-title>
 
         <v-card-text>
@@ -56,7 +62,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="addPhase()">
+          <v-btn color="primary" @click="addPhase()" :loading="isLoading">
             Submit
           </v-btn>
           <v-btn color="secondary" @click="phaseDialog = false">
@@ -66,9 +72,9 @@
       </v-card>
     </v-dialog>
 
-    <v-btn color="primary" text>Discussion</v-btn>
+    <v-btn color="primary" dense outlined>Group Discussion</v-btn>
 
-    <v-list v-if="group !== null" class="mt-5 px-2">
+    <v-list v-if="group !== null" class="mt-5 py-5">
       <v-list-group
         v-for="(phase, i) in group.Phases"
         :value="false"
@@ -85,7 +91,9 @@
           <v-list-item-action>
             <v-btn small text color="primary">add task</v-btn>
             <v-btn small text color="warning">edit</v-btn>
-            <v-btn small text color="error">delete</v-btn>
+            <v-btn small text color="error" @click="deletePhase(i)"
+              >delete</v-btn
+            >
           </v-list-item-action>
         </template>
 
@@ -122,6 +130,14 @@
         </v-list-group>
       </v-list-group>
     </v-list>
+    <v-snackbar v-model="isShowMessage" :timeout="3000">
+      {{ message }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="isShowMessage = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -133,29 +149,32 @@ export default {
   components: {},
   data: () => ({
     group: {
-      'Students': {
-        'StudentNumber': 'Muhammad At Thariq Filardi'
+      Students: {
+        StudentNumber: "Muhammad At Thariq Filardi",
       },
-      'Phases': [
+      Phases: [
         {
-          'Name': 'Phase Name',
-          'DueDate': 'Phases DueDate',
-          'Categories': [
+          Name: "Phase Name",
+          DueDate: "Phases DueDate",
+          Categories: [
             {
-              'Name': 'Category Name',
-              'Tasks': [
+              Name: "Category Name",
+              Tasks: [
                 {
-                  'Name': 'Task Name',
-                  'DueDate': 'Task DueDate',
-                  'Priority': 3,
-                  'Note': 'Task note'
-                }
-              ]
-            }
-          ]
-        }
-      ]
+                  Name: "Task Name",
+                  DueDate: "Task DueDate",
+                  Priority: 3,
+                  Note: "Task note",
+                },
+              ],
+            },
+          ],
+        },
+      ],
     },
+    isShowMessage: false,
+    message: "Succes",
+    isLoading: false,
     phaseDialog: false,
     categoryDialog: false,
     taskDialog: false,
@@ -167,7 +186,8 @@ export default {
   computed: {
     ...sync("user", ["currCourse"]),
     phaseName: function() {
-      if (this.group == null || this.group.Phases == undefined) return "Backlog";
+      if (this.group == null || this.group.Phases == undefined)
+        return "Backlog";
       return `Sprint ${this.group.Phases.length}`;
     },
   },
@@ -176,8 +196,8 @@ export default {
   },
   methods: {
     getGroupDetail() {
-      console.log(this.currCourse.subject.ClassTransactionId);
-      console.log(this.currCourse.group.Group.GroupNumber);
+      // console.log(this.currCourse.subject.ClassTransactionId);
+      // console.log(this.currCourse.group.Group.GroupNumber);
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}`
       ).on("value", (s) => {
@@ -185,9 +205,48 @@ export default {
         this.group = s.val();
       });
     },
-    setPhase() {},
+    addPhase() {
+      this.isLoading = true;
+      window.Database.ref(
+        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.group.Phases.length}`
+      )
+        .set({
+          Name: this.phaseName,
+          DueDate: this.phaseDueDate,
+          Categories: false
+        })
+        .then(() => {
+          this.message = "New phase has been added 😉";
+        })
+        .catch(() => {
+          this.message = "Something went wrong 😢";
+        })
+        .finally(() => {
+          this.isShowMessage = true;
+          this.phaseDialog = false;
+          this.isLoading = false;
+        });
+    },
+    deletePhase(phaseIdx) {
+      this.isLoading = true;
+      this.group.Phases.splice(phaseIdx, 1)
+
+      window.Database.ref(
+        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/`
+      )
+        .set(this.group.Phases)
+        .then(() => {
+          this.message = "Phase has been removed 😉";
+        })
+        .catch(() => {
+          this.message = "Something went wrong 😢";
+        })
+        .finally(() => {
+          this.isShowMessage = true;
+          this.isLoading = false;
+        });
+    },
   },
-  addPhase() {},
 };
 </script>
 <style lang=""></style>
