@@ -4,17 +4,27 @@
       {{ currCourse.subject.Subject }}
     </div>
 
-    <v-btn type="info">Create New Phase</v-btn>
+    <v-btn color="primary">Create New Phase</v-btn>
 
-    <v-list v-if="group !== null" class="mt-5">
+    <v-list v-if="group !== null" class="mt-5 px-2">
       <v-list-group
         v-for="(phase, i) in group.Phases"
         :value="true"
         :key="i"
-        :color="$vuetify.theme.themes.dark.info"
+        :color="$vuetify.theme.themes.light.info"
       >
         <template v-slot:activator>
-          <v-list-item-title>{{ phase.Name }}</v-list-item-title>
+          <v-list-item-content>
+            <v-list-item-title class="display-2">{{
+              phase.Name
+            }}</v-list-item-title>
+            <v-list-item-subtitle v-text="phase.DueDate"></v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn small color="primary">add task</v-btn>
+            <v-btn small color="warning">edit</v-btn>
+            <v-btn small color="error">delete</v-btn>
+          </v-list-item-action>
         </template>
 
         <v-list-group
@@ -28,6 +38,10 @@
           <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title>{{ category.Name }}</v-list-item-title>
+              <v-list-item-action>
+                <v-btn small color="primary">add task</v-btn>
+                <v-btn small color="error">delete</v-btn>
+              </v-list-item-action>
             </v-list-item-content>
           </template>
           <v-list-item v-for="(task, k) in category.Tasks" :key="k">
@@ -36,8 +50,11 @@
               <v-list-item-subtitle
                 v-text="task.DueDate"
               ></v-list-item-subtitle>
-
               {{ task.Priority }}
+              <v-list-item-action>
+                <v-btn small color="warning">edit</v-btn>
+                <v-btn small color="error">delete</v-btn>
+              </v-list-item-action>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
@@ -75,6 +92,9 @@ export default {
       });
     },
     setPhase() {},
+    addPhase() {
+      console.log("add phase");
+    },
   },
 };
 </script>
