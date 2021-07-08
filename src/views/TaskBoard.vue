@@ -42,8 +42,6 @@
           </v-menu>
         </v-card-text>
 
-        <v-divider></v-divider>
-
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="primary" @click="addPhase()" :loading="isLoading">
@@ -133,67 +131,38 @@
     </v-dialog>
 
     <v-card>
-      <v-card-title class="text-h2">
+      <v-card-title
+        class="text-h3 white--text"
+        style="background-color: #0090D1;"
+      >
         {{ currCourse.subject.Subject }}
       </v-card-title>
+      <v-divider></v-divider>
 
       <v-card-actions>
-        <v-btn class="mr-5" color="primary" dense text @click="setPhaseName()">Add New Phase</v-btn>
+        <v-btn color="primary" dense text @click="setPhaseName()"
+          >Add New Phase</v-btn
+        >
         <v-btn color="primary" dense text>Group Discussion</v-btn>
       </v-card-actions>
-
-      <v-divider></v-divider>
 
       <v-list v-if="phases !== null" class="mt-5 py-5" nav>
         <v-list-group
           v-for="(phase, i) in phases"
           :key="i"
+          :value="false"
           append-icon="mdi-arrow-down-drop-circle-outline"
         >
           <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title class="display-2">{{
-                phase.Name
-              }}</v-list-item-title>
-              <v-list-item-subtitle
-                v-text="phase.DueDate"
-                class="text--error"
-              ></v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-action>
-              <v-menu offset-y min-width="150" transition="scale-transition">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on">
-                    <v-icon>
-                      mdi-format-list-bulleted-square
-                    </v-icon>
-                  </v-btn>
-                </template>
-                <v-list nav>
-                  <v-list-item @click="showCategoryDialog(i)">
-                    <v-list-item-title>Add task</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item @click="editPhase(i)">
-                    <v-list-item-title>Edit</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item @click="deletePhase(i)">
-                    <v-list-item-title>Delete</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </v-list-item-action>
-          </template>
-
-          <v-list-group
-            v-for="(category, j) in phase.Categories"
-            :key="j"
-            sub-group
-            prepend-icon="mdi-arrow-down-drop-circle-outline"
-            color="primary"
-          >
-            <template v-slot:activator>
+            <v-list-item>
               <v-list-item-content>
-                <v-list-item-title  class="display-1">{{ category.Name }}</v-list-item-title>
+                <v-list-item-title class="display-2">{{
+                  phase.Name
+                }}</v-list-item-title>
+                <v-list-item-subtitle
+                  v-text="phase.DueDate"
+                  class="text--error"
+                ></v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
                 <v-menu offset-y min-width="150" transition="scale-transition">
@@ -205,16 +174,77 @@
                     </v-btn>
                   </template>
                   <v-list nav>
-                    <v-list-item>
+                    <v-list-item @click="showCategoryDialog(i)">
                       <v-list-item-title>Add task</v-list-item-title>
                     </v-list-item>
-                    <v-list-item>
+                    <v-list-item @click="editPhase(i)">
+                      <v-list-item-title>Edit</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="deletePhase(i)">
                       <v-list-item-title>Delete</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
               </v-list-item-action>
+            </v-list-item>
+          </template>
+
+          <v-list-item v-if="!phase.Categories" class="text-center">
+            <v-list-item-content>
+              <v-list-item-title class="text-h3">
+                empty 😅
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-group
+            v-for="(category, j) in phase.Categories"
+            :key="j"
+            sub-group
+            prepend-icon="mdi-arrow-down-drop-circle-outline"
+            color="primary"
+          >
+            <template v-slot:activator>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title class="display-1">{{
+                    category.Name
+                  }}</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-menu
+                    offset-y
+                    min-width="150"
+                    transition="scale-transition"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on">
+                        <v-icon>
+                          mdi-format-list-bulleted-square
+                        </v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list nav>
+                      <v-list-item>
+                        <v-list-item-title>Add task</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="deleteCategory(i, j)"> 
+                        <v-list-item-title>Delete</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-list-item-action>
+              </v-list-item>
             </template>
+
+            <v-list-item v-if="!category.Tasks" class="text-center">
+              <v-list-item-content>
+                <v-list-item-title class="text-h3">
+                  empty 😅
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+
             <v-list-item v-for="(task, k) in category.Tasks" :key="k">
               <v-list-item-content>
                 <v-list-item-title v-text="task.Name"></v-list-item-title>
@@ -237,7 +267,7 @@
                     <v-list-item>
                       <v-list-item-title>Edit</v-list-item-title>
                     </v-list-item>
-                    <v-list-item>
+                    <v-list-item @click="deleteTask(i, j, k)">
                       <v-list-item-title>Delete</v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -313,14 +343,17 @@ export default {
       this.phaseDialog = !this.phaseDialog;
     },
     addPhase() {
+
       this.isLoading = true;
-
       let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx;
-
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}`
       )
-        .set({ Name: this.phaseName, DueDate: this.phaseDueDate })
+        .set({
+          Name: this.phaseName,
+          DueDate: this.phaseDueDate,
+          Categories: this.phases[idx].Categories,
+        })
         .then(() => {
           this.message =
             this.phaseIdx === -1
@@ -354,11 +387,51 @@ export default {
         .finally(() => {
           this.isShowMessage = true;
           this.isLoading = false;
-          this.phaseIdx = -1;
         });
+    },
+    deleteTask(phaseIdx, categoryIdx, taskIdx) {
+      this.isLoading = true;
+      this.phases[phaseIdx].Categories[categoryIdx].Tasks.splice(taskIdx, 1)
+      window.Database.ref(
+        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${phaseIdx}/Categories/${categoryIdx}/Tasks/`
+      )
+        .set(this.phases[phaseIdx].Categories[categoryIdx].Tasks)
+        .then(() => {
+          this.message = "Task has been removed 😉";
+        })
+        .catch(() => {
+          this.message = "Something went wrong 😢";
+        })
+        .finally(() => {
+          this.isShowMessage = true;
+          this.isLoading = false;
+        });
+
+    },
+    deleteCategory(phaseIdx, categoryIdx) {
+
+      this.isLoading = true;
+      this.phases[phaseIdx].Categories.splice(categoryIdx, 1)
+
+      window.Database.ref(
+        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${phaseIdx}/Categories/`
+      )
+        .set(this.phases[phaseIdx].Categories)
+        .then(() => {
+          this.message = "Category has been removed 😉";
+        })
+        .catch(() => {
+          this.message = "Something went wrong 😢";
+        })
+        .finally(() => {
+          this.isShowMessage = true;
+          this.isLoading = false;
+        });
+
     },
     addTaskOnPhase() {
       this.isLoading = true;
+
       let task = {
         Name: this.taskName,
         DueDate: this.taskDueDate,
@@ -366,35 +439,44 @@ export default {
         Note: this.taskNote,
       };
 
-      let categoryId = -1;
-      switch (this.taskCategory) {
-        case "Open":
-          categoryId = 0;
-          break;
-        case "On Progress":
-          categoryId = 1;
-          break;
-        case "Pending":
-          categoryId = 2;
-          break;
-        case "Completed":
-          categoryId = 3;
-          break;
+      let categoryId = !this.phases[this.phaseIdx].Categories ? 0 : -1;
+
+      if(categoryId == -1){
+        categoryId = this.phases[this.phaseIdx].Categories.findIndex(e => {
+          console.log(typeof e.Name)
+          console.log(typeof this.taskCategory)
+          return e.Name === this.taskCategory})
+        console.log(categoryId)
+        if(categoryId == -1){
+           categoryId = this.phases[this.phaseIdx].Categories.length
+        }
       }
 
-      let taskId = this.phases[this.phaseIdx].Categories[categoryId].Tasks
-        .length;
+      let taskId;
       let refLink = `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.phaseIdx}/Categories/${categoryId}`;
 
-      if (taskId) {
+        // check if current category is exist
+      if (this.phases[this.phaseIdx].Categories && this.phases[this.phaseIdx].Categories[categoryId])  {
+        // if exist then check if has a Tasks or not
+        if(this.phases[this.phaseIdx].Categories[categoryId].Tasks){
+          // if exist then get the last idx
+          taskId = this.phases[this.phaseIdx].Categories[categoryId].Tasks.length;
+        }
+        else{
+          // if not, assign task idx to 0
+          taskId = 0
+        }
+        // finally change refLink to that task
         refLink = refLink + `/Tasks/${taskId}`;
       } else {
-        // change task to category
+        // if not exist, then create a category
         task = {
           Name: this.taskCategory,
           Tasks: [task],
         };
       }
+
+      console.log(task)
 
       window.Database.ref(refLink)
         .set(task)
