@@ -1,23 +1,6 @@
 <template lang="">
   <v-container fluid>
-    <div class="text-h2">
-      {{ currCourse.subject.Subject }}
-    </div>
-
     <v-dialog v-model="phaseDialog" max-width="500">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          class="mr-5"
-          color="primary"
-          dense
-          outlined
-          v-bind="attrs"
-          v-on="on"
-          @click="setPhaseName()"
-          >Add New Phase</v-btn
-        >
-      </template>
-
       <v-card>
         <v-card-title
           class="display-2 font-weight-light white--text"
@@ -149,86 +132,122 @@
       </v-card>
     </v-dialog>
 
-    <v-btn color="primary" dense outlined>Group Discussion</v-btn>
+    <v-card>
+      <v-card-title class="text-h2">
+        {{ currCourse.subject.Subject }}
+      </v-card-title>
 
-    <v-list v-if="phases !== null" class="mt-5 py-5">
-      <v-list-group
-        v-for="(phase, i) in phases"
-        :value="false"
-        :key="i"
-        color="info"
-      >
-        <template v-slot:activator>
-          <v-list-item-content>
-            <v-list-item-title class="display-2">{{
-              phase.Name
-            }}</v-list-item-title>
-            <v-list-item-subtitle
-              v-text="phase.DueDate"
-              class="text--error"
-            ></v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-menu
-              offset-y
-              min-width="150"
-              transition="scale-transition"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon>
-                    mdi-format-list-bulleted-square
-                  </v-icon>
-                </v-btn>
-              </template>
-              <v-list nav>
-                <v-list-item color="primary" @click="showCategoryDialog(i)">
-                  <v-list-item-title>Add task</v-list-item-title>
-                </v-list-item>
-                <v-list-item color="warning" @click="editPhase(i)">
-                  <v-list-item-title>Edit</v-list-item-title>
-                </v-list-item>
-                <v-list-item color="error" @click="deletePhase(i)">
-                  <v-list-item-title>Delete</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-list-item-action>
-        </template>
+      <v-card-actions>
+        <v-btn class="mr-5" color="primary" dense text @click="setPhaseName()">Add New Phase</v-btn>
+        <v-btn color="primary" dense text>Group Discussion</v-btn>
+      </v-card-actions>
 
+      <v-divider></v-divider>
+
+      <v-list v-if="phases !== null" class="mt-5 py-5" nav>
         <v-list-group
-          v-for="(category, j) in phase.Categories"
-          :key="j"
-          :value="false"
-          sub-group
-          no-action
-          color="info"
+          v-for="(phase, i) in phases"
+          :key="i"
+          append-icon="mdi-arrow-down-drop-circle-outline"
         >
           <template v-slot:activator>
             <v-list-item-content>
-              <v-list-item-title>{{ category.Name }}</v-list-item-title>
-              <v-list-item-action>
-                <v-btn small text color="primary">add task</v-btn>
-                <v-btn small text color="error">delete</v-btn>
-              </v-list-item-action>
-            </v-list-item-content>
-          </template>
-          <v-list-item v-for="(task, k) in category.Tasks" :key="k">
-            <v-list-item-content>
-              <v-list-item-title v-text="task.Name"></v-list-item-title>
+              <v-list-item-title class="display-2">{{
+                phase.Name
+              }}</v-list-item-title>
               <v-list-item-subtitle
-                v-text="task.DueDate"
+                v-text="phase.DueDate"
+                class="text--error"
               ></v-list-item-subtitle>
-              {{ task.Priority }}
-              <v-list-item-action>
-                <v-btn small text color="warning">edit</v-btn>
-                <v-btn small text color="error">delete</v-btn>
-              </v-list-item-action>
             </v-list-item-content>
-          </v-list-item>
+            <v-list-item-action>
+              <v-menu offset-y min-width="150" transition="scale-transition">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>
+                      mdi-format-list-bulleted-square
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <v-list nav>
+                  <v-list-item @click="showCategoryDialog(i)">
+                    <v-list-item-title>Add task</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="editPhase(i)">
+                    <v-list-item-title>Edit</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="deletePhase(i)">
+                    <v-list-item-title>Delete</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-list-item-action>
+          </template>
+
+          <v-list-group
+            v-for="(category, j) in phase.Categories"
+            :key="j"
+            sub-group
+            prepend-icon="mdi-arrow-down-drop-circle-outline"
+            color="primary"
+          >
+            <template v-slot:activator>
+              <v-list-item-content>
+                <v-list-item-title  class="display-1">{{ category.Name }}</v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-menu offset-y min-width="150" transition="scale-transition">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on">
+                      <v-icon>
+                        mdi-format-list-bulleted-square
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list nav>
+                    <v-list-item>
+                      <v-list-item-title>Add task</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>Delete</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-list-item-action>
+            </template>
+            <v-list-item v-for="(task, k) in category.Tasks" :key="k">
+              <v-list-item-content>
+                <v-list-item-title v-text="task.Name"></v-list-item-title>
+                <v-list-item-subtitle
+                  v-text="task.DueDate"
+                ></v-list-item-subtitle>
+                {{ task.Priority }}
+                {{ task.Note }}
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-menu offset-y min-width="150" transition="scale-transition">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on">
+                      <v-icon>
+                        mdi-format-list-bulleted-square
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list nav>
+                    <v-list-item>
+                      <v-list-item-title>Edit</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title>Delete</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-list-item-action>
+            </v-list-item>
+          </v-list-group>
         </v-list-group>
-      </v-list-group>
-    </v-list>
+      </v-list>
+    </v-card>
     <v-snackbar v-model="isShowMessage" :timeout="3000">
       {{ message }}
       <template v-slot:action="{ attrs }">
@@ -283,26 +302,30 @@ export default {
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases`
       ).on("value", (s) => {
         this.phases = [];
-        this.phases = Object.assign(this.phases, s.val())
-        console.log(this.phases)
+        this.phases = Object.assign(this.phases, s.val());
+        console.log(this.phases);
       });
     },
-    setPhaseName(){
-      if (this.phases == null || this.phases == undefined) this.phaseName = "Backlog";
-      console.log(this.phases)
+    setPhaseName() {
+      if (this.phases == null || this.phases == undefined)
+        this.phaseName = "Backlog";
       this.phaseName = `Sprint ${this.phases.length}`;
+      this.phaseDialog = !this.phaseDialog;
     },
     addPhase() {
       this.isLoading = true;
 
-      let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx
+      let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx;
 
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}`
       )
-        .set( { Name: this.phaseName, DueDate: this.phaseDueDate })
+        .set({ Name: this.phaseName, DueDate: this.phaseDueDate })
         .then(() => {
-          this.message = this.phaseIdx === -1 ? "New phase has been added 😉" : "Change has been saved 😉";
+          this.message =
+            this.phaseIdx === -1
+              ? "New phase has been added 😉"
+              : "Change has been saved 😉";
         })
         .catch(() => {
           this.message = "Something went wrong 😢";
@@ -311,7 +334,7 @@ export default {
           this.isShowMessage = true;
           this.phaseDialog = false;
           this.isLoading = false;
-          this.phasesIdx = -1
+          this.phasesIdx = -1;
         });
     },
     deletePhase(phaseIdx) {
@@ -331,7 +354,7 @@ export default {
         .finally(() => {
           this.isShowMessage = true;
           this.isLoading = false;
-          this.phaseIdx = -1
+          this.phaseIdx = -1;
         });
     },
     addTaskOnPhase() {
@@ -385,25 +408,24 @@ export default {
           this.categoryDialog = false;
           this.isShowMessage = true;
           this.isLoading = false;
-          this.phaseIdx = -1
+          this.phaseIdx = -1;
         });
     },
     showCategoryDialog(idx) {
       this.phaseIdx = idx;
       this.categoryDialog = !this.categoryDialog;
     },
-    editPhase(idx){
-      this.phaseIdx = idx
-      this.phaseDialog = !this.phasesDialog
-      this.phaseName = this.phases[idx].Name
-      this.phaseDueDate = this.phases[idx].DueDate
+    editPhase(idx) {
+      this.phaseIdx = idx;
+      this.phaseDialog = !this.phasesDialog;
+      this.phaseName = this.phases[idx].Name;
+      this.phaseDueDate = this.phases[idx].DueDate;
       // console.log(this.phases[idx].Name)
       // console.log(this.phaseName)
-      this.phaseName = this.phases[idx].Name
+      this.phaseName = this.phases[idx].Name;
       // console.log(this.phases[idx].Name)
       // console.log(this.phaseName)
-
-    }
+    },
   },
 };
 </script>
