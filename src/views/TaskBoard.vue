@@ -13,6 +13,7 @@
           outlined
           v-bind="attrs"
           v-on="on"
+          @click="setPhaseName()"
           >Add New Phase</v-btn
         >
       </template>
@@ -34,7 +35,7 @@
           ></v-text-field>
 
           <v-menu
-            v-model="datePicker"
+            v-model="phaseDatePicker"
             :close-on-content-click="false"
             :nudge-right="40"
             transition="scale-transition"
@@ -44,7 +45,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="phaseDueDate"
-                label="Phase Due Date"
+                label="Due Date"
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
@@ -53,7 +54,7 @@
             </template>
             <v-date-picker
               v-model="phaseDueDate"
-              @input="datePicker = false"
+              @input="phaseDatePicker = false"
             ></v-date-picker>
           </v-menu>
         </v-card-text>
@@ -65,7 +66,83 @@
           <v-btn color="primary" @click="addPhase()" :loading="isLoading">
             Submit
           </v-btn>
-          <v-btn color="secondary" @click="phaseDialog = false">
+          <v-btn color="error" @click="phaseDialog = false">
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="categoryDialog" max-width="500">
+      <v-card>
+        <v-card-title
+          class="display-2 font-weight-light white--text"
+          style="background-color: #0090D1"
+        >
+          Add Task
+        </v-card-title>
+
+        <v-card-text>
+          <v-text-field
+            label="Name"
+            prepend-icon="mdi-briefcase-clock"
+            v-model="taskName"
+          ></v-text-field>
+
+          <v-menu
+            v-model="categoryDatePicker"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="taskDueDate"
+                label="Due Date"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="taskDueDate"
+              @input="categoryDatePicker = false"
+            ></v-date-picker>
+          </v-menu>
+          <v-text-field
+            label="Priority"
+            type="number"
+            v-model="taskPriority"
+            prepend-icon="mdi-briefcase-clock"
+          ></v-text-field>
+
+          <v-combobox
+            v-model="taskCategory"
+            :items="inputCategories"
+            label="Category"
+            prepend-icon="mdi-briefcase-clock"
+          >
+          </v-combobox>
+
+          <v-textarea
+            outlined
+            label="Note"
+            v-model="taskNote"
+            prepend-icon="mdi-briefcase-clock"
+          ></v-textarea>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="addTask()" :loading="isLoading">
+            Submit
+          </v-btn>
+          <v-btn color="error" @click="categoryDialog = false">
             Cancel
           </v-btn>
         </v-card-actions>
@@ -74,9 +151,9 @@
 
     <v-btn color="primary" dense outlined>Group Discussion</v-btn>
 
-    <v-list v-if="group !== null" class="mt-5 py-5">
+    <v-list v-if="phases !== null" class="mt-5 py-5">
       <v-list-group
-        v-for="(phase, i) in group.Phases"
+        v-for="(phase, i) in phases"
         :value="false"
         :key="i"
         color="info"
@@ -86,14 +163,36 @@
             <v-list-item-title class="display-2">{{
               phase.Name
             }}</v-list-item-title>
-            <v-list-item-subtitle v-text="phase.DueDate"></v-list-item-subtitle>
+            <v-list-item-subtitle
+              v-text="phase.DueDate"
+              class="text--error"
+            ></v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
-            <v-btn small text color="primary">add task</v-btn>
-            <v-btn small text color="warning">edit</v-btn>
-            <v-btn small text color="error" @click="deletePhase(i)"
-              >delete</v-btn
+            <v-menu
+              offset-y
+              min-width="150"
+              transition="scale-transition"
             >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon>
+                    mdi-format-list-bulleted-square
+                  </v-icon>
+                </v-btn>
+              </template>
+              <v-list nav>
+                <v-list-item color="primary" @click="showCategoryDialog(i)">
+                  <v-list-item-title>Add task</v-list-item-title>
+                </v-list-item>
+                <v-list-item color="warning" @click="editPhase(i)">
+                  <v-list-item-title>Edit</v-list-item-title>
+                </v-list-item>
+                <v-list-item color="error" @click="deletePhase(i)">
+                  <v-list-item-title>Delete</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-list-item-action>
         </template>
 
@@ -148,32 +247,9 @@ export default {
   name: "TaskBoard",
   components: {},
   data: () => ({
-    group: {
-      Students: {
-        StudentNumber: "Muhammad At Thariq Filardi",
-      },
-      Phases: [
-        {
-          Name: "Phase Name",
-          DueDate: "Phases DueDate",
-          Categories: [
-            {
-              Name: "Category Name",
-              Tasks: [
-                {
-                  Name: "Task Name",
-                  DueDate: "Task DueDate",
-                  Priority: 3,
-                  Note: "Task note",
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
+    phases: false,
     isShowMessage: false,
-    message: "Succes",
+    message: "Success",
     isLoading: false,
     phaseDialog: false,
     categoryDialog: false,
@@ -181,39 +257,47 @@ export default {
     phaseDueDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
       .substr(0, 10),
-    datePicker: false,
+    phaseDatePicker: false,
+    taskName: "",
+    taskDueDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substr(0, 10),
+    taskPriority: "",
+    taskNote: "",
+    taskCategory: "",
+    inputCategories: ["Open", "On Progress", "Pending", "Compeleted"],
+    categoryDatePicker: false,
+    phaseIdx: -1,
+    categoryIdx: -1,
+    phaseName: false,
   }),
   computed: {
     ...sync("user", ["currCourse"]),
-    phaseName: function() {
-      if (this.group == null || this.group.Phases == undefined)
-        return "Backlog";
-      return `Sprint ${this.group.Phases.length}`;
-    },
   },
   created() {
     this.getGroupDetail();
   },
   methods: {
     getGroupDetail() {
-      // console.log(this.currCourse.subject.ClassTransactionId);
-      // console.log(this.currCourse.group.Group.GroupNumber);
       window.Database.ref(
-        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}`
+        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases`
       ).on("value", (s) => {
-        this.group = [];
-        this.group = s.val();
+        this.phases = [];
+        this.phases = Object.assign({}, this.phases, s.val())
       });
+    },
+    setPhaseName(){
+      if (this.phases == null || this.phases == undefined) this.phaseName = "Backlog";
+      this.phaseName = `Sprint ${this.phases.length}`;
     },
     addPhase() {
       this.isLoading = true;
       window.Database.ref(
-        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.group.Phases.length}`
+        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.phases.length}`
       )
         .set({
           Name: this.phaseName,
           DueDate: this.phaseDueDate,
-          Categories: false
         })
         .then(() => {
           this.message = "New phase has been added 😉";
@@ -229,12 +313,12 @@ export default {
     },
     deletePhase(phaseIdx) {
       this.isLoading = true;
-      this.group.Phases.splice(phaseIdx, 1)
+      this.phases.splice(phaseIdx, 1);
 
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/`
       )
-        .set(this.group.Phases)
+        .set(this.phases)
         .then(() => {
           this.message = "Phase has been removed 😉";
         })
@@ -246,6 +330,77 @@ export default {
           this.isLoading = false;
         });
     },
+    addTask() {
+      this.isLoading = true;
+      let task = {
+        Name: this.taskName,
+        DueDate: this.taskDueDate,
+        Priority: this.taskPriority,
+        Note: this.taskNote,
+      };
+
+      let categoryId = -1;
+      switch (this.taskCategory) {
+        case "Open":
+          categoryId = 0;
+          break;
+        case "On Progress":
+          categoryId = 1;
+          break;
+        case "Pending":
+          categoryId = 2;
+          break;
+        case "Completed":
+          categoryId = 3;
+          break;
+      }
+
+      let taskId = this.phases[this.phaseIdx].Categories[categoryId].Tasks
+        .length;
+      let refLink = `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.phaseIdx}/Categories/${categoryId}`;
+
+      if (taskId) {
+        refLink = refLink + `/Tasks/${taskId}`;
+      } else {
+        // change task to category
+        task = {
+          Name: this.taskCategory,
+          Tasks: [task],
+        };
+      }
+      console.log(task);
+      console.log(this.phaseIdx);
+
+      window.Database.ref(refLink)
+        .set(task)
+        .then(() => {
+          this.message = "New task has been added 😉";
+        })
+        .catch(() => {
+          this.message = "Something went wrong 😢";
+        })
+        .finally(() => {
+          this.categoryDialog = false;
+          this.isShowMessage = true;
+          this.isLoading = false;
+        });
+    },
+    showCategoryDialog(idx) {
+      this.phaseIdx = idx;
+      this.categoryDialog = !this.categoryDialog;
+    },
+    editPhase(idx){
+      this.phaseIdx = idx
+      this.phaseDialog = !this.phasesDialog
+      this.phaseName = this.phases[idx].Name
+      this.phaseDueDate = this.phases[idx].DueDate
+      console.log(this.phases[idx].Name)
+      console.log(this.phaseName)
+      this.phaseName = this.phases[idx].Name
+      console.log(this.phases[idx].Name)
+      console.log(this.phaseName)
+
+    }
   },
 };
 </script>
