@@ -55,6 +55,7 @@
                   outlined
                   elevation="2"
                   tile
+                  color="primary"
                   :loading="isLoading"
                   @keypress.enter="login()"
                 >

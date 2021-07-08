@@ -139,7 +139,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="addTask()" :loading="isLoading">
+          <v-btn color="primary" @click="addTaskOnPhase()" :loading="isLoading">
             Submit
           </v-btn>
           <v-btn color="error" @click="categoryDialog = false">
@@ -283,11 +283,13 @@ export default {
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases`
       ).on("value", (s) => {
         this.phases = [];
-        this.phases = Object.assign({}, this.phases, s.val())
+        this.phases = Object.assign(this.phases, s.val())
+        console.log(this.phases)
       });
     },
     setPhaseName(){
       if (this.phases == null || this.phases == undefined) this.phaseName = "Backlog";
+      console.log(this.phases)
       this.phaseName = `Sprint ${this.phases.length}`;
     },
     addPhase() {
@@ -330,7 +332,7 @@ export default {
           this.isLoading = false;
         });
     },
-    addTask() {
+    addTaskOnPhase() {
       this.isLoading = true;
       let task = {
         Name: this.taskName,
@@ -394,11 +396,11 @@ export default {
       this.phaseDialog = !this.phasesDialog
       this.phaseName = this.phases[idx].Name
       this.phaseDueDate = this.phases[idx].DueDate
-      console.log(this.phases[idx].Name)
-      console.log(this.phaseName)
+      // console.log(this.phases[idx].Name)
+      // console.log(this.phaseName)
       this.phaseName = this.phases[idx].Name
-      console.log(this.phases[idx].Name)
-      console.log(this.phaseName)
+      // console.log(this.phases[idx].Name)
+      // console.log(this.phaseName)
 
     }
   },
