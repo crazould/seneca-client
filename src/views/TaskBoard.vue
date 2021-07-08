@@ -294,15 +294,15 @@ export default {
     },
     addPhase() {
       this.isLoading = true;
+
+      let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx
+
       window.Database.ref(
-        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.phases.length}`
+        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}`
       )
-        .set({
-          Name: this.phaseName,
-          DueDate: this.phaseDueDate,
-        })
+        .set( { Name: this.phaseName, DueDate: this.phaseDueDate })
         .then(() => {
-          this.message = "New phase has been added 😉";
+          this.message = this.phaseIdx === -1 ? "New phase has been added 😉" : "Change has been saved 😉";
         })
         .catch(() => {
           this.message = "Something went wrong 😢";
@@ -311,6 +311,7 @@ export default {
           this.isShowMessage = true;
           this.phaseDialog = false;
           this.isLoading = false;
+          this.phasesIdx = -1
         });
     },
     deletePhase(phaseIdx) {
@@ -330,6 +331,7 @@ export default {
         .finally(() => {
           this.isShowMessage = true;
           this.isLoading = false;
+          this.phaseIdx = -1
         });
     },
     addTaskOnPhase() {
@@ -370,8 +372,6 @@ export default {
           Tasks: [task],
         };
       }
-      console.log(task);
-      console.log(this.phaseIdx);
 
       window.Database.ref(refLink)
         .set(task)
@@ -385,6 +385,7 @@ export default {
           this.categoryDialog = false;
           this.isShowMessage = true;
           this.isLoading = false;
+          this.phaseIdx = -1
         });
     },
     showCategoryDialog(idx) {
