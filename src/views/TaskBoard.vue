@@ -1,6 +1,5 @@
 <template lang="">
   <v-container fluid>
-
     <v-dialog v-model="phaseDialog" max-width="500">
       <v-card>
         <v-card-title
@@ -122,7 +121,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="addTask()" :loading="isLoading">
+          <v-btn color="primary" @click="changeTask()" :loading="isLoading">
             Submit
           </v-btn>
           <v-btn color="error" @click="categoryDialog = false">
@@ -141,7 +140,7 @@
       </v-card-title>
       <v-divider></v-divider>
 
-      <v-card-actions >
+      <v-card-actions>
         <v-btn color="primary" dense text @click="setPhaseName()"
           >Add New Phase</v-btn
         >
@@ -231,9 +230,7 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn icon v-bind="attrs" v-on="on">
-                        <v-icon>
-                          mdi-format-list-bulleted-square
-                        </v-icon>
+                        <v-icon> mdi-format-list-bulleted-square </v-icon>
                       </v-btn>
                     </template>
                     <v-list nav>
@@ -276,7 +273,7 @@
                     </v-btn>
                   </template>
                   <v-list nav>
-                    <v-list-item>
+                    <v-list-item @click="editTask(i, j, k)">
                       <v-list-item-title>Edit</v-list-item-title>
                     </v-list-item>
                     <v-list-item @click="deleteTask(i, j, k)">
@@ -330,11 +327,12 @@ export default {
     categoryDatePicker: false,
     phaseIdx: -1,
     categoryIdx: -1,
+    taskIdx: -1,
     phaseName: false,
-    isAddTaskOnCategory: false,
+    isAddTaskOnCategory: false
   }),
   computed: {
-    ...sync("user", ["currCourse"]),
+    ...sync("user", ["currCourse"])
   },
   created() {
     this.getGroupDetail();
@@ -343,20 +341,23 @@ export default {
     getGroupDetail() {
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases`
-      ).on("value", (s) => {
+      ).on("value", s => {
         this.phases = [];
         this.phases = Object.assign(this.phases, s.val());
         console.log(this.phases);
       });
     },
     setPhaseName() {
-      console.log(this.phases.length == 0)
-      console.log(this.phases == null)
-      console.log(this.phases == undefined)
-      if (this.phases.length == 0 || this.phases == null || this.phases == undefined){
+      console.log(this.phases.length == 0);
+      console.log(this.phases == null);
+      console.log(this.phases == undefined);
+      if (
+        this.phases.length == 0 ||
+        this.phases == null ||
+        this.phases == undefined
+      ) {
         this.phaseName = "Backlog";
-      }
-      else {
+      } else {
         this.phaseName = `Sprint ${this.phases.length}`;
       }
 
@@ -370,7 +371,7 @@ export default {
       )
         .set({
           Name: this.phaseName,
-          DueDate: this.phaseDueDate,
+          DueDate: this.phaseDueDate
         })
         .then(() => {
           this.message =
@@ -444,27 +445,26 @@ export default {
           this.isLoading = false;
         });
     },
-    addTask() {
+    changeTask() {
       this.isLoading = true;
 
       let task = {
         Name: this.taskName,
         DueDate: this.taskDueDate,
         Priority: this.taskPriority,
-        Note: this.taskNote,
+        Note: this.taskNote
       };
-      
-      let categoryId
 
-      if(this.categoryIdx == -1){
+      let categoryId;
+
+      if (this.categoryIdx == -1) {
         categoryId = !this.phases[this.phaseIdx].Categories ? 0 : -1;
+      } else {
+        categoryId = this.categoryIdx;
       }
-      else {
-        categoryId = this.categoryIdx
-      }
-      
+
       if (categoryId == -1) {
-        categoryId = this.phases[this.phaseIdx].Categories.findIndex((e) => {
+        categoryId = this.phases[this.phaseIdx].Categories.findIndex(e => {
           console.log(typeof e.Name);
           console.log(typeof this.taskCategory);
           return e.Name === this.taskCategory;
@@ -483,8 +483,13 @@ export default {
         this.phases[this.phaseIdx].Categories &&
         this.phases[this.phaseIdx].Categories[categoryId]
       ) {
-        // if exist then check if has a Tasks or not
-        if (this.phases[this.phaseIdx].Categories[categoryId].Tasks) {
+        // if exist then check if has a Tasks or not, or is in edit state
+        console.log(this.taskIdx);
+
+        if (this.taskIdx != -1) {
+          // if in edit state then use taskIdx
+          taskId = this.taskIdx;
+        } else if (this.phases[this.phaseIdx].Categories[categoryId].Tasks) {
           // if exist then get the last idx
           taskId = this.phases[this.phaseIdx].Categories[categoryId].Tasks
             .length;
@@ -492,17 +497,19 @@ export default {
           // if not, assign task idx to 0
           taskId = 0;
         }
+
         // finally change refLink to that task
         refLink = refLink + `/Tasks/${taskId}`;
       } else {
         // if not exist, then create a category
         task = {
           Name: this.taskCategory,
-          Tasks: [task],
+          Tasks: [task]
         };
       }
 
       console.log(task);
+      console.log(taskId);
 
       window.Database.ref(refLink)
         .set(task)
@@ -517,29 +524,62 @@ export default {
           this.isShowMessage = true;
           this.isLoading = false;
           this.phaseIdx = -1;
+          this.categoryIdx = -1;
+          this.taskIdx = -1;
         });
     },
     addTaskOnCategory(phaseIdx, categoryIdx) {
-      this.isAddTaskOnCategory = true
-      this.phaseIdx = phaseIdx
-      this.categoryIdx = categoryIdx
+      this.isAddTaskOnCategory = true;
+      this.phaseIdx = phaseIdx;
+      this.categoryIdx = categoryIdx;
+
+      this.taskName = "";
+      this.taskDueDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10);
+      this.taskNote = "";
+      this.taskPriority = 0;
 
       this.categoryDialog = !this.categoryDialog;
     },
     addTaskOnPhase(idx) {
-      this.isAddTaskOnCategory = false
+      this.isAddTaskOnCategory = false;
       this.phaseIdx = idx;
+
+      this.taskName = "";
+      this.taskDueDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10);
+      this.taskNote = "";
+      this.taskPriority = 0;
+      this.taskCategory = "";
+
       this.categoryDialog = !this.categoryDialog;
     },
-    editTask() {},
+    editTask(phaseIdx, categoryIdx, taskIdx) {
+      this.isAddTaskOnCategory = false;
+      this.phaseIdx = phaseIdx;
+      this.categoryIdx = categoryIdx;
+      this.taskIdx = taskIdx;
+
+      let category = this.phases[phaseIdx].Categories[categoryIdx];
+      let task = category.Tasks[taskIdx];
+
+      console.log(category);
+      console.log(task);
+
+      this.taskName = task.Name;
+      this.taskDueDate = task.DueDate;
+      this.taskPriority = task.Priority;
+      this.taskNote = task.Note;
+      this.taskCategory = category.Name;
+
+      this.categoryDialog = !this.categoryDialog;
+    },
     editPhase(idx) {
       this.phaseIdx = idx;
       this.phaseDialog = !this.phasesDialog;
       this.phaseName = this.phases[idx].Name;
       this.phaseDueDate = this.phases[idx].DueDate;
       this.phaseName = this.phases[idx].Name;
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang=""></style>
