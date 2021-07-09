@@ -1,5 +1,6 @@
 <template lang="">
   <v-container fluid>
+
     <v-dialog v-model="phaseDialog" max-width="500">
       <v-card>
         <v-card-title
@@ -101,6 +102,7 @@
           ></v-text-field>
 
           <v-combobox
+            v-if="isAddTaskOnCategory == false"
             v-model="taskCategory"
             :items="inputCategories"
             label="Category"
@@ -120,7 +122,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="addTaskOnPhase()" :loading="isLoading">
+          <v-btn color="primary" @click="addTask()" :loading="isLoading">
             Submit
           </v-btn>
           <v-btn color="error" @click="categoryDialog = false">
@@ -139,14 +141,24 @@
       </v-card-title>
       <v-divider></v-divider>
 
-      <v-card-actions>
+      <v-card-actions >
         <v-btn color="primary" dense text @click="setPhaseName()"
           >Add New Phase</v-btn
         >
         <v-btn color="primary" dense text>Group Discussion</v-btn>
       </v-card-actions>
 
-      <v-list v-if="phases !== null" class="mt-5 py-5" nav>
+      <v-list v-if="phases.length === 0" class="my-5 py-5" nav>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="text-center text-h3">
+              Your team haven't create product backlog
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+
+      <v-list v-else class="my-5 py-5" nav>
         <v-list-group
           v-for="(phase, i) in phases"
           :key="i"
@@ -174,7 +186,7 @@
                     </v-btn>
                   </template>
                   <v-list nav>
-                    <v-list-item @click="showCategoryDialog(i)">
+                    <v-list-item @click="addTaskOnPhase(i)">
                       <v-list-item-title>Add task</v-list-item-title>
                     </v-list-item>
                     <v-list-item @click="editPhase(i)">
@@ -225,10 +237,10 @@
                       </v-btn>
                     </template>
                     <v-list nav>
-                      <v-list-item>
+                      <v-list-item @click="addTaskOnCategory(i, j)">
                         <v-list-item-title>Add task</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="deleteCategory(i, j)"> 
+                      <v-list-item @click="deleteCategory(i, j)">
                         <v-list-item-title>Delete</v-list-item-title>
                       </v-list-item>
                     </v-list>
@@ -319,6 +331,7 @@ export default {
     phaseIdx: -1,
     categoryIdx: -1,
     phaseName: false,
+    isAddTaskOnCategory: false,
   }),
   computed: {
     ...sync("user", ["currCourse"]),
@@ -337,13 +350,19 @@ export default {
       });
     },
     setPhaseName() {
-      if (this.phases == null || this.phases == undefined)
+      console.log(this.phases.length == 0)
+      console.log(this.phases == null)
+      console.log(this.phases == undefined)
+      if (this.phases.length == 0 || this.phases == null || this.phases == undefined){
         this.phaseName = "Backlog";
-      this.phaseName = `Sprint ${this.phases.length}`;
+      }
+      else {
+        this.phaseName = `Sprint ${this.phases.length}`;
+      }
+
       this.phaseDialog = !this.phaseDialog;
     },
     addPhase() {
-
       this.isLoading = true;
       let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx;
       window.Database.ref(
@@ -352,7 +371,6 @@ export default {
         .set({
           Name: this.phaseName,
           DueDate: this.phaseDueDate,
-          Categories: this.phases[idx].Categories,
         })
         .then(() => {
           this.message =
@@ -391,7 +409,7 @@ export default {
     },
     deleteTask(phaseIdx, categoryIdx, taskIdx) {
       this.isLoading = true;
-      this.phases[phaseIdx].Categories[categoryIdx].Tasks.splice(taskIdx, 1)
+      this.phases[phaseIdx].Categories[categoryIdx].Tasks.splice(taskIdx, 1);
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${phaseIdx}/Categories/${categoryIdx}/Tasks/`
       )
@@ -406,12 +424,10 @@ export default {
           this.isShowMessage = true;
           this.isLoading = false;
         });
-
     },
     deleteCategory(phaseIdx, categoryIdx) {
-
       this.isLoading = true;
-      this.phases[phaseIdx].Categories.splice(categoryIdx, 1)
+      this.phases[phaseIdx].Categories.splice(categoryIdx, 1);
 
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${phaseIdx}/Categories/`
@@ -427,9 +443,8 @@ export default {
           this.isShowMessage = true;
           this.isLoading = false;
         });
-
     },
-    addTaskOnPhase() {
+    addTask() {
       this.isLoading = true;
 
       let task = {
@@ -438,33 +453,44 @@ export default {
         Priority: this.taskPriority,
         Note: this.taskNote,
       };
+      
+      let categoryId
 
-      let categoryId = !this.phases[this.phaseIdx].Categories ? 0 : -1;
-
-      if(categoryId == -1){
-        categoryId = this.phases[this.phaseIdx].Categories.findIndex(e => {
-          console.log(typeof e.Name)
-          console.log(typeof this.taskCategory)
-          return e.Name === this.taskCategory})
-        console.log(categoryId)
-        if(categoryId == -1){
-           categoryId = this.phases[this.phaseIdx].Categories.length
+      if(this.categoryIdx == -1){
+        categoryId = !this.phases[this.phaseIdx].Categories ? 0 : -1;
+      }
+      else {
+        categoryId = this.categoryIdx
+      }
+      
+      if (categoryId == -1) {
+        categoryId = this.phases[this.phaseIdx].Categories.findIndex((e) => {
+          console.log(typeof e.Name);
+          console.log(typeof this.taskCategory);
+          return e.Name === this.taskCategory;
+        });
+        console.log(categoryId);
+        if (categoryId == -1) {
+          categoryId = this.phases[this.phaseIdx].Categories.length;
         }
       }
 
       let taskId;
       let refLink = `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.phaseIdx}/Categories/${categoryId}`;
 
-        // check if current category is exist
-      if (this.phases[this.phaseIdx].Categories && this.phases[this.phaseIdx].Categories[categoryId])  {
+      // check if current category is exist
+      if (
+        this.phases[this.phaseIdx].Categories &&
+        this.phases[this.phaseIdx].Categories[categoryId]
+      ) {
         // if exist then check if has a Tasks or not
-        if(this.phases[this.phaseIdx].Categories[categoryId].Tasks){
+        if (this.phases[this.phaseIdx].Categories[categoryId].Tasks) {
           // if exist then get the last idx
-          taskId = this.phases[this.phaseIdx].Categories[categoryId].Tasks.length;
-        }
-        else{
+          taskId = this.phases[this.phaseIdx].Categories[categoryId].Tasks
+            .length;
+        } else {
           // if not, assign task idx to 0
-          taskId = 0
+          taskId = 0;
         }
         // finally change refLink to that task
         refLink = refLink + `/Tasks/${taskId}`;
@@ -476,7 +502,7 @@ export default {
         };
       }
 
-      console.log(task)
+      console.log(task);
 
       window.Database.ref(refLink)
         .set(task)
@@ -493,20 +519,25 @@ export default {
           this.phaseIdx = -1;
         });
     },
-    showCategoryDialog(idx) {
+    addTaskOnCategory(phaseIdx, categoryIdx) {
+      this.isAddTaskOnCategory = true
+      this.phaseIdx = phaseIdx
+      this.categoryIdx = categoryIdx
+
+      this.categoryDialog = !this.categoryDialog;
+    },
+    addTaskOnPhase(idx) {
+      this.isAddTaskOnCategory = false
       this.phaseIdx = idx;
       this.categoryDialog = !this.categoryDialog;
     },
+    editTask() {},
     editPhase(idx) {
       this.phaseIdx = idx;
       this.phaseDialog = !this.phasesDialog;
       this.phaseName = this.phases[idx].Name;
       this.phaseDueDate = this.phases[idx].DueDate;
-      // console.log(this.phases[idx].Name)
-      // console.log(this.phaseName)
       this.phaseName = this.phases[idx].Name;
-      // console.log(this.phases[idx].Name)
-      // console.log(this.phaseName)
     },
   },
 };
