@@ -334,8 +334,13 @@ export default {
   computed: {
     ...sync("user", ["currCourse"])
   },
-  created() {
+  mounted() {
     this.getGroupDetail();
+  },
+  watch: {
+    currCourse(newSemester) {
+      this.getGroupDetail(newSemester);
+    }
   },
   methods: {
     getGroupDetail() {

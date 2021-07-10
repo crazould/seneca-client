@@ -27,24 +27,27 @@
       dense
     />
     <default-notifications />
-      <v-menu
-        bottom
-        left
-        min-width="200"
-        offset-y
-        origin="top right"
-      >
-        <template v-slot:activator="{ attrs, on }">
-          <v-btn
-           @click="toggleTheme()"
-           class="ml-2" min-width="0" text v-bind="attrs" v-on="on">
-            <v-icon>
-              {{ $vuetify.theme.dark ? 'mdi-moon-waning-crescent' : 'mdi-white-balance-sunny' }}
-            </v-icon>
-          </v-btn>
-        </template>
-      </v-menu>
-      <default-account />
+    <v-menu bottom left min-width="200" offset-y origin="top right">
+      <template v-slot:activator="{ attrs, on }">
+        <v-btn
+          @click="toggleTheme()"
+          class="ml-2"
+          min-width="0"
+          text
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon>
+            {{
+              $vuetify.theme.dark
+                ? "mdi-moon-waning-crescent"
+                : "mdi-white-balance-sunny"
+            }}
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-menu>
+    <default-account />
   </v-app-bar>
 </template>
 
@@ -59,10 +62,10 @@ export default {
   components: {
     DefaultAccount: () => import("./widgets/Account"),
     DefaultDrawerToggle: () => import("./widgets/DrawerToggle"),
-    DefaultNotifications: () => import("./widgets/Notifications"),
+    DefaultNotifications: () => import("./widgets/Notifications")
   },
   data: () => ({
-    semesters: [],
+    semesters: []
   }),
   mounted() {
     this.getSemesters();
@@ -71,31 +74,42 @@ export default {
     ...sync("app", ["drawer", "mini"]),
     ...sync("user", ["currSemester", "dark"]),
     pageName: get("route/name"),
+    user: function() {
+      return JSON.parse(this.$session.get("user"));
+    }
+  },
+  watch: {
+    currSemester(newSemester) {
+      // console.log(newSemester);
+      window.Database.ref(
+        `Students/${this.user.User.UserName}/currSemester/`
+      ).set(newSemester);
+    }
   },
   methods: {
     getSemesters() {
       axios
         .get("https://laboratory.binus.ac.id/lapi/api/Schedule/GetSemesters")
-        .then((r) => this.setSemesters(r));
+        .then(r => this.setSemesters(r));
     },
     setSemesters(r) {
       this.semesters = r.data;
       this.semesters = r.data
-        .filter((e) => {
+        .filter(e => {
           return !e.Description.includes("BCA");
         })
-        .map((e) => {
+        .map(e => {
           return {
             text: e.Description,
-            value: e.SemesterId,
+            value: e.SemesterId
           };
         });
-      this.$store.set("user/currSemester", this.semesters[0]);
     },
-    toggleTheme(){
-      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
-      this.$store.set('user/dark', this.$vuetify.theme.dark)
+    toggleTheme() {
+      window.Database.ref(`Students/${this.user.User.UserName}/dark`).set(
+        !this.$vuetify.theme.dark
+      );
     }
-  },
+  }
 };
 </script>

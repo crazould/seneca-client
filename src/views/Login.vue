@@ -8,9 +8,9 @@
         <v-col >
           <v-card
             height="100vh"
-            :dark="false"
             absolute
             right
+            :light="true"
           >
             <v-layout
               column
@@ -18,6 +18,8 @@
               justify-center
               fill-height
               class="mx-5"
+            :light="true"
+
             >
               <v-card-title width="100%" class="text-h1 mb-2">
                 Seneca
@@ -62,8 +64,8 @@
                   Login
                 </v-btn>
               </v-card-actions>
-              <v-alert v-if="isError" type="error">
-                {{ errorText }}
+              <v-alert v-if="isError" type="error" class="text-center">
+                {{ errTxt }}
               </v-alert>
             </v-layout>
           </v-card>
@@ -95,21 +97,20 @@ export default {
         })
         .then((r) => {
           this.isLoading = false;
-          // console.log(r.data);
           this.$session.start();
           this.$session.set("user", JSON.stringify(r.data));
-          // let currentUser = JSON.parse(this.$session.get("user"));
-          // console.log(currentUser);
+
+
           this.$router.push("/");
+
         })
         .catch((error) => {
-          // console.log(error);
           this.isLoading = false;
-          this.errTxt = true;
-          if (error.status == 401) {
-            this.errorText = "Wrong NIM & password combination";
+          this.isError = true;
+          if (error.response && error.response.status == 401) {
+            this.errTxt = "Wrong NIM & password combination";
           } else {
-            this.errorerrTxtText = "Server under maintenace";
+            this.errTxt = "Server under maintenace";
           }
         });
     },

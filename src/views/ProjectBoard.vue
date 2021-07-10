@@ -21,10 +21,10 @@
     <v-row v-for="(course, index) in courses" :key="index">
       <v-col>
         <v-card min-height="180">
-          <v-card-title class="font-weight-light text-h3" >
+          <v-card-title class="font-weight-light text-h3">
             {{ course.subject.Subject }}
           </v-card-title>
-          <v-card-subtitle >
+          <v-card-subtitle>
             {{ course.subject.Class }}
           </v-card-subtitle>
           <v-card-actions>
@@ -56,15 +56,18 @@ export default {
   data: () => ({
     courses: [],
     isLoading: false,
-    message: "",
+    message: ""
   }),
   computed: {
     ...sync("user", ["currSemester"]),
+    user: function() {
+      return JSON.parse(this.$session.get("user"));
+    }
   },
   watch: {
     currSemester(newSemester) {
       this.getCourses(newSemester);
-    },
+    }
   },
   mounted() {
     this.getCourses(this.currSemester);
@@ -73,24 +76,24 @@ export default {
     getCourses(newSemester) {
       if (newSemester.value == undefined) return;
 
-      const user = JSON.parse(this.$session.get("user"));
       this.isLoading = true;
-      this.courses = 0
-      this.message = ''
+      this.courses = 0;
+      this.message = "";
       // console.log(newSemester.value)
       // console.log(user.Token.token)
+
       axios
         .get(
-          `https://laboratory.binus.ac.id/lapi/api/Binusmaya/GetStudentSubjectsInSemesterWithGroup?semesterId=${newSemester.value}&binusianNumber=${user.User.UserName}`,
+          `https://laboratory.binus.ac.id/lapi/api/Binusmaya/GetStudentSubjectsInSemesterWithGroup?semesterId=${newSemester.value}&binusianNumber=${this.user.User.UserName}`,
           {
             headers: {
-              Authorization: `Bearer ${user.Token.token}`,
-            },
+              Authorization: `Bearer ${this.user.Token.token}`
+            }
           }
         )
-        .then((res) => {
+        .then(res => {
           // console.log(res.data);
-          this.courses = res.data.filter((e) => {
+          this.courses = res.data.filter(e => {
             return e.group !== null && e.group.Status !== "none";
           });
 
@@ -110,15 +113,17 @@ export default {
               ? "You don't have any project in current semester 😅"
               : "Please form a group in bluejack website first, before proceed to manage your project here.";
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         })
         .finally(() => (this.isLoading = false));
     },
-    setCurrCourse(course){
+    setCurrCourse(course) {
       // console.log(course)
-      this.$store.set('user/currCourse', course)
+      window.Database.ref(`Students/${this.user.User.UserName}/currCourse/`).set(
+        course
+      );
     }
-  },
+  }
 };
 </script>
