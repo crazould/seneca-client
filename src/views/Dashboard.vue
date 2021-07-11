@@ -1,5 +1,17 @@
 <template>
   <v-container fluid>
+    
+    <material-alert
+      border="left"
+      text
+      type="info"
+      colored-border
+      v-if="message != ''"
+      dismissible
+    >
+      {{ message }}
+    </material-alert>
+
     <v-row>
       <v-col cols="12">
         <v-row>
@@ -40,11 +52,36 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-row v-for="(course, index) in courses" :key="index">
+      <v-col>
+        <v-card min-height="180">
+          <v-card-title class="font-weight-light text-h3">
+            {{ course.subject.Subject }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ course.subject.Class }}
+          </v-card-subtitle>
+          <v-card-actions>
+            <v-btn
+              :color="$vuetify.theme.themes.dark.primary"
+              link
+              class="white--text"
+              absolute
+              bottom
+              @click="setCurrCourse(course)"
+            >
+              Manage Project
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import Vue from "vue";
+import { sync } from "vuex-pathify";
 
 const lineSmooth = Vue.chartist.Interpolation.cardinal({
   tension: 0
@@ -149,8 +186,28 @@ export default {
           }
         }
       }
-    ]
+    ],
+    courses: [],
+    isLoading: false,
+    message: ""
   }),
-  mounted() {}
+  computed: {
+    ...sync("user", ["currSemester", 'currCourses']),
+    user: function() {
+      return JSON.parse(this.$session.get("user"));
+    }
+  },
+  watch: {
+    currSemester() {
+      this.courses = this.$store.get('user/currCourses')
+    }
+  },
+  mounted() {
+      this.courses = this.$store.get('user/currCourses')
+
+  },
+  methods: {
+
+  }
 };
 </script>

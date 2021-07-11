@@ -11,6 +11,18 @@ const state = {
     "text" : "Even Semester 2019/2020",
     "value" : "d8c4d2f6-80ee-4ded-a71b-2ae601f4db4c"
   },
+  currCourses: [
+    {
+      group: {
+        Group: {
+          GroupNumber: false
+        }
+      },
+      subject: {
+        ClassTransactionId: false
+      }
+    }
+  ],
   isOnline: false,
   currCourse: {
     group: {

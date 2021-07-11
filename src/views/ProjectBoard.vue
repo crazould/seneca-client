@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import { sync } from "vuex-pathify";
 import MaterialAlert from "../components/MaterialAlert.vue";
 export default {
@@ -64,59 +63,14 @@ export default {
     }
   },
   watch: {
-    currSemester(newSemester) {
-      this.getCourses(newSemester);
+    currSemester() {
+      this.courses = this.$store.get('user/currCourses')
     }
   },
   mounted() {
-    this.getCourses(this.currSemester);
+    this.courses = this.$store.get('user/currCourses')
   },
   methods: {
-    getCourses(newSemester) {
-      if (newSemester.value == undefined) return;
-
-      this.isLoading = true;
-      this.courses = 0;
-      this.message = "";
-      // console.log(newSemester.value)
-      // console.log(user.Token.token)
-
-      axios
-        .get(
-          `https://laboratory.binus.ac.id/lapi/api/Binusmaya/GetStudentSubjectsInSemesterWithGroup?semesterId=${newSemester.value}&binusianNumber=${this.user.User.UserName}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.user.Token.token}`
-            }
-          }
-        )
-        .then(res => {
-          // console.log(res.data);
-          this.courses = res.data.filter(e => {
-            return e.group !== null && e.group.Status !== "none";
-          });
-
-          // Uncomment this to debugging the UI of Project Component
-          // let temp = this.courses;
-          // temp.forEach((element) => {
-          //   this.courses.push(element);
-          // });
-          // temp.forEach((element) => {
-          //   this.courses.push(element);
-          // });
-          // console.log(this.courses);
-          // this.courses = temp;
-
-          this.message =
-            this.courses.length === 0
-              ? "You don't have any project in current semester 😅"
-              : "Please form a group in bluejack website first, before proceed to manage your project here.";
-        })
-        .catch(error => {
-          console.log(error);
-        })
-        .finally(() => (this.isLoading = false));
-    },
     setCurrCourse(course) {
       // console.log(course)
       window.Database.ref(`Students/${this.user.User.UserName}/currCourse/`)

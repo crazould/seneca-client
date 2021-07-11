@@ -17,7 +17,7 @@
 
     <v-spacer />
     <v-combobox
-      v-model="currSemester"
+      v-on:change="changeSemester"
       :items="semesters"
       label="Semester"
       class="mt-8"
@@ -48,6 +48,12 @@
       </template>
     </v-menu>
     <default-account />
+    <v-progress-linear
+      :active="isLoading"
+      :indeterminate="isLoading"
+      absolute
+      bottom
+    ></v-progress-linear>
   </v-app-bar>
 </template>
 
@@ -65,7 +71,10 @@ export default {
     DefaultNotifications: () => import("./widgets/Notifications")
   },
   data: () => ({
-    semesters: []
+    semesters: [],
+    courses: [],
+    isLoading: false,
+    message: ""
   }),
   mounted() {
     this.getSemesters();
@@ -79,14 +88,47 @@ export default {
     }
   },
   watch: {
-    currSemester(newSemester) {
-      // console.log(newSemester);
-      window.Database.ref(
-        `Students/${this.user.User.UserName}/currSemester/`
-      ).set(newSemester);
-    }
+    // currSemester(newSemester) {
+    //   // console.log(newSemester);
+    //   this.isLoading = true;
+    //   window.Database.ref(
+    //     `Students/${this.user.User.UserName}/currSemester/`
+    //   ).set(newSemester);
+    //   this.getCourses(newSemester);
+    // }
   },
   methods: {
+    getCourses(newSemester) {
+      if (newSemester.value == undefined) return;
+      this.courses = 0;
+      this.message = "";
+      axios
+        .get(
+          `https://laboratory.binus.ac.id/lapi/api/Binusmaya/GetStudentSubjectsInSemesterWithGroup?semesterId=${newSemester.value}&binusianNumber=${this.user.User.UserName}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.user.Token.token}`
+            }
+          }
+        )
+        .then(res => {
+          // console.log(res.data);
+          this.courses = res.data.filter(e => {
+            return e.group !== null && e.group.Status !== "none";
+          });
+          console.log(this.courses);
+          this.$store.set("user/currCourses", this.courses);
+          this.currSemester = newSemester
+          this.message =
+            this.courses.length === 0
+              ? "You don't have any project in current semester 😅"
+              : "Please form a group in bluejack website first, before proceed to manage your project here.";
+        })
+        .catch(error => {
+          console.log(error);
+        })
+        .finally(() => (this.isLoading = false));
+    },
     getSemesters() {
       axios
         .get("https://laboratory.binus.ac.id/lapi/api/Schedule/GetSemesters")
@@ -109,6 +151,16 @@ export default {
       window.Database.ref(`Students/${this.user.User.UserName}/dark`).set(
         !this.$vuetify.theme.dark
       );
+    },
+    changeSemester(newSemester) {
+      console.log(newSemester);
+
+      this.isLoading = true;
+      window.Database.ref(
+        `Students/${this.user.User.UserName}/currSemester/`
+      ).set(newSemester);
+      this.getCourses(newSemester);
+
     }
   }
 };
