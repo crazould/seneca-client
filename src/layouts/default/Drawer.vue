@@ -4,18 +4,16 @@
     v-model="drawer"
     :dark="dark"
     :right="$vuetify.rtl"
-    :mini-variant.sync="mini"
+    :mini-variant="mini"
     mini-variant-width="80"
     app
     width="260"
   >
-
     <div class="px-2">
       <default-drawer-header />
-      <v-divider class="mx-3 mb-2" />
+      <v-divider class="mx-3 mb-5" />
       <default-list :items="items" />
     </div>
-
   </v-navigation-drawer>
 </template>
 
@@ -27,21 +25,15 @@ export default {
   name: "DefaultDrawer",
 
   components: {
-    DefaultDrawerHeader: () =>
-      import(
-        "./widgets/DrawerHeader"
-      ),
-    DefaultList: () =>
-      import(
-        "./List"
-      ),
+    DefaultDrawerHeader: () => import("./widgets/DrawerHeader"),
+    DefaultList: () => import("./List")
   },
 
   computed: {
     ...get("user", ["dark"]),
     ...get("app", ["items", "version"]),
-    ...sync("app", ["drawer", "drawerImage", "mini"]),
-  },
+    ...sync("app", ["drawer", "drawerImage", "mini"])
+  }
 };
 </script>
 

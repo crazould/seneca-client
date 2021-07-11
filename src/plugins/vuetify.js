@@ -16,10 +16,6 @@ const theme = {
   error: "#B00020",
 };
 
-const themeCache = {
-  get: (key) => localStorage.getItem(key),
-  set: (key, value) => localStorage.setItem(key, value),
-}
 
 export default new Vuetify({
   breakpoint: { mobileBreakpoint: 960 },
@@ -30,9 +26,6 @@ export default new Vuetify({
     themes: {
       dark: theme,
       light: theme,
-    },
-    options: {
-      themeCache,
     },
   },
 });

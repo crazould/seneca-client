@@ -31,7 +31,6 @@
             <v-btn
               :color="$vuetify.theme.themes.dark.primary"
               link
-              to="/task-board"
               class="white--text"
               absolute
               bottom
@@ -120,9 +119,11 @@ export default {
     },
     setCurrCourse(course) {
       // console.log(course)
-      window.Database.ref(`Students/${this.user.User.UserName}/currCourse/`).set(
-        course
-      );
+      window.Database.ref(`Students/${this.user.User.UserName}/currCourse/`)
+        .set(course)
+        .then(() => {
+          this.$router.push("/task-board");
+        });
     }
   }
 };

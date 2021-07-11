@@ -2,24 +2,28 @@
   <v-app>
     <v-container fluid style="width:100vw; padding: 0;" class="white">
       <v-row no-gutters>
-        <v-col xl="10" class="justify-center align-center d-none d-sm-flex" md="9" sm="8" >
-          <v-img class="d-none d-sm-flex" src="../assets/Data-analyse.svg" max-height="800" contain/>
+        <v-col
+          xl="10"
+          class="justify-center align-center d-none d-sm-flex"
+          md="9"
+          sm="8"
+        >
+          <v-img
+            class="d-none d-sm-flex"
+            src="../assets/Data-analyse.svg"
+            max-height="800"
+            contain
+          />
         </v-col>
-        <v-col >
-          <v-card
-            height="100vh"
-            absolute
-            right
-            :light="true"
-          >
+        <v-col>
+          <v-card height="100vh" absolute right :light="true">
             <v-layout
               column
               align-center
               justify-center
               fill-height
               class="mx-5"
-            :light="true"
-
+              :light="true"
             >
               <v-card-title width="100%" class="text-h1 mb-2">
                 Seneca
@@ -84,7 +88,7 @@ export default {
     nim: "",
     isError: false,
     isLoading: false,
-    errTxt: "",
+    errTxt: ""
   }),
   methods: {
     login() {
@@ -93,27 +97,55 @@ export default {
       axios
         .post("https://laboratory.binus.ac.id/lapi/api/Account/LogOnBinusian", {
           username: this.nim,
-          password: this.password,
+          password: this.password
         })
-        .then((r) => {
-          this.isLoading = false;
+        .then(r => {
           this.$session.start();
           this.$session.set("user", JSON.stringify(r.data));
 
+          window.Database.ref(
+            `Students/${r.data.User.UserName}`
+          ).once("value", s => {
+            let data = {};
+            data = Object.assign(data, s.val());
 
-          this.$router.push("/");
-
+            if (!data.StudentNumber) {
+              window.Database.ref(
+                `Students/${r.data.User.Username}`
+              )
+                .set({
+                  IsOnline: true,
+                  Name: r.data.User.Name,
+                  Notifications: false,
+                  StudentNumber: r.data.User.Username,
+                  dark: false
+                })
+                .then(() => {
+                  this.$router.push("/");
+                });
+            } else {
+              window.Database.ref(
+                `Students/${data.StudentNumber}/IsOnline/`
+              )
+                .set(true)
+                .then(() => {
+                  this.$router.push("/");
+                });
+            }
+          });
         })
-        .catch((error) => {
-          this.isLoading = false;
+        .catch(error => {
           this.isError = true;
           if (error.response && error.response.status == 401) {
             this.errTxt = "Wrong NIM & password combination";
           } else {
             this.errTxt = "Server under maintenace";
           }
+        })
+        .finally(() => {
+          this.isLoading = false;
         });
-    },
-  },
+    }
+  }
 };
 </script>

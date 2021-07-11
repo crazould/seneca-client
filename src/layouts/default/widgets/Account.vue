@@ -21,9 +21,16 @@ export default {
   data: () => ({}),
   methods: {
     logout() {
-      this.$session.destroy();
-      this.$router.push("/login");
-    },
-  },
+      const user = JSON.parse(this.$session.get("user"))
+      window.Database.ref(
+        `Students/${user.User.UserName}/IsOnline/`
+      )
+        .set(false)
+        .then(() => {
+          this.$session.destroy();
+          this.$router.push("/login");
+        });
+    }
+  }
 };
 </script>

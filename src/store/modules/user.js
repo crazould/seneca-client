@@ -6,24 +6,25 @@ import { IN_BROWSER } from '@/util/globals'
 
 const state = {
   dark: false,
-  currSemester: {},
-  currCourse: {},
+  isExist: false,
+  currSemester: {
+    "text" : "Even Semester 2019/2020",
+    "value" : "d8c4d2f6-80ee-4ded-a71b-2ae601f4db4c"
+  },
+  isOnline: false,
+  currCourse: {
+    group: {
+      Group: {
+        GroupNumber: false
+      }
+    },
+    subject: {
+      ClassTransactionId: false
+    }
+  },
   drawer: {
-    // image: 0,
-    // gradient: 0,
     mini: false,
   },
-  // gradients: [
-  //   'rgba(228, 226, 226, 1), rgba(255, 255, 255, 0.7)',
-  //   'rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)',
-  //   'rgba(244, 67, 54, .8), rgba(244, 67, 54, .8)',
-  // ],
-  // images: [
-  //   'https://demos.creative-tim.com/material-dashboard-pro/assets/img/sidebar-1.jpg',
-  //   'https://demos.creative-tim.com/material-dashboard-pro/assets/img/sidebar-2.jpg',
-  //   'https://demos.creative-tim.com/material-dashboard-pro/assets/img/sidebar-3.jpg',
-  //   'https://demos.creative-tim.com/material-dashboard-pro/assets/img/sidebar-4.jpg',
-  // ],
   notifications: [],
   rtl: false,
 }
