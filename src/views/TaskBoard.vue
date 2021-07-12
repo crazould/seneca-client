@@ -287,10 +287,10 @@
         </v-list-group>
       </v-list>
     </v-card>
-    <v-snackbar v-model="isShowMessage" :timeout="3000">
+    <v-snackbar absolute bottom right class="mb-5" v-model="isShowMessage" :timeout="3000">
       {{ message }}
       <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="isShowMessage = false">
+        <v-btn color="error" text v-bind="attrs" @click="isShowMessage = false">
           Close
         </v-btn>
       </template>

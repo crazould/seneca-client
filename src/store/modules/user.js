@@ -7,6 +7,7 @@ import { IN_BROWSER } from '@/util/globals'
 const state = {
   dark: false,
   isExist: false,
+  isShowMessage: false,
   currSemester: {
     // "text" : "",
     // "value" : ""

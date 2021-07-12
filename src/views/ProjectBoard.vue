@@ -7,17 +7,6 @@
       top
     ></v-progress-linear>
 
-    <material-alert
-      border="left"
-      text
-      type="info"
-      colored-border
-      v-if="message != ''"
-      dismissible
-    >
-      {{ message }}
-    </material-alert>
-
     <v-row v-for="(course, index) in courses" :key="index">
       <v-col>
         <v-card min-height="180">
@@ -47,14 +36,11 @@
 
 <script>
 import { sync } from "vuex-pathify";
-import MaterialAlert from "../components/MaterialAlert.vue";
 export default {
   name: "ProjectBoard",
-  components: { MaterialAlert },
   data: () => ({
     courses: [],
     isLoading: false,
-    message: ""
   }),
   computed: {
     ...sync("user", ["currSemester", "currCourses"]),
@@ -64,15 +50,14 @@ export default {
   },
   watch: {
     currCourses(newValue) {
-      this.courses = newValue
+      this.courses = newValue;
     }
   },
   mounted() {
-    this.courses = this.$store.get('user/currCourses')
+    this.courses = this.$store.get("user/currCourses");
   },
   methods: {
     setCurrCourse(course) {
-      // console.log(course)
       window.Database.ref(`Students/${this.user.User.UserName}/currCourse/`)
         .set(course)
         .then(() => {
