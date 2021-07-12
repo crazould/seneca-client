@@ -103,36 +103,33 @@ export default {
           this.$session.start();
           this.$session.set("user", JSON.stringify(r.data));
 
-          window.Database.ref(
-            `Students/${r.data.User.UserName}`
-          ).once("value", s => {
-            let data = {};
-            data = Object.assign(data, s.val());
+          window.Database.ref(`Students/${r.data.User.UserName}`).once(
+            "value",
+            s => {
+              let data = {};
+              data = Object.assign(data, s.val());
 
-            if (!data.StudentNumber) {
-              window.Database.ref(
-                `Students/${r.data.User.Username}`
-              )
-                .set({
-                  IsOnline: true,
-                  Name: r.data.User.Name,
-                  Notifications: false,
-                  StudentNumber: r.data.User.Username,
-                  dark: false
-                })
-                .then(() => {
-                  this.$router.push("/");
-                });
-            } else {
-              window.Database.ref(
-                `Students/${data.StudentNumber}/IsOnline/`
-              )
-                .set(true)
-                .then(() => {
-                  this.$router.push("/");
-                });
+              if (!data.StudentNumber) {
+                window.Database.ref(`Students/${r.data.User.Username}`)
+                  .set({
+                    IsOnline: true,
+                    Name: r.data.User.Name,
+                    Notifications: false,
+                    StudentNumber: r.data.User.Username,
+                    dark: false
+                  })
+                  .then(() => {
+                    this.$router.push("/");
+                  });
+              } else {
+                window.Database.ref(`Students/${data.StudentNumber}/IsOnline/`)
+                  .set(true)
+                  .then(() => {
+                    this.$router.push("/");
+                  });
+              }
             }
-          });
+          );
         })
         .catch(error => {
           this.isError = true;

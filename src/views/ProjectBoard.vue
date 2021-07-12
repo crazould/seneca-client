@@ -57,14 +57,14 @@ export default {
     message: ""
   }),
   computed: {
-    ...sync("user", ["currSemester"]),
+    ...sync("user", ["currSemester", "currCourses"]),
     user: function() {
       return JSON.parse(this.$session.get("user"));
     }
   },
   watch: {
-    currSemester() {
-      this.courses = this.$store.get('user/currCourses')
+    currCourses(newValue) {
+      this.courses = newValue
     }
   },
   mounted() {

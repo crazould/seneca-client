@@ -198,16 +198,27 @@ export default {
     }
   },
   watch: {
-    currSemester() {
-      this.courses = this.$store.get('user/currCourses')
+    currCourses(newValue) {
+      this.courses = newValue
+      this.setChartData()
     }
   },
   mounted() {
       this.courses = this.$store.get('user/currCourses')
-
+      this.setChartData()
   },
   methods: {
+    setChartData(){
+      this.courses.forEach(course => {
+        
+        console.log(course.subject.ClassTransactionId)
+        console.log(course.group.Group.GroupNumber)
 
+        // continue;
+        // window.Database.ref(`Subjects/${course.subject.ClassTransactionId}/Groups/${course.group.Group.GroupNumber}`)
+
+      });
+    }
   }
 };
 </script>

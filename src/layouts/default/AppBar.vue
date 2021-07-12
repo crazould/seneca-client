@@ -19,6 +19,7 @@
     <v-combobox
       v-on:change="changeSemester"
       :items="semesters"
+      :value="currSemester.text"
       label="Semester"
       class="mt-8"
       color="secondary"
@@ -78,6 +79,7 @@ export default {
   }),
   mounted() {
     this.getSemesters();
+    // this.getCourses(this.currSemester)
   },
   computed: {
     ...sync("app", ["drawer", "mini"]),
@@ -88,18 +90,15 @@ export default {
     }
   },
   watch: {
-    // currSemester(newSemester) {
-    //   // console.log(newSemester);
-    //   this.isLoading = true;
-    //   window.Database.ref(
-    //     `Students/${this.user.User.UserName}/currSemester/`
-    //   ).set(newSemester);
-    //   this.getCourses(newSemester);
-    // }
+    currSemester(newSemester) {
+      // console.log(newSemester);
+      this.changeSemester(newSemester)
+    }
   },
   methods: {
     getCourses(newSemester) {
       if (newSemester.value == undefined) return;
+      console.log(newSemester)
       this.courses = 0;
       this.message = "";
       axios
@@ -117,8 +116,9 @@ export default {
             return e.group !== null && e.group.Status !== "none";
           });
           console.log(this.courses);
+
           this.$store.set("user/currCourses", this.courses);
-          this.currSemester = newSemester
+          // this.$store.set("user/currSemester", newSemester);
           this.message =
             this.courses.length === 0
               ? "You don't have any project in current semester 😅"
@@ -147,20 +147,17 @@ export default {
           };
         });
     },
-    toggleTheme() {
-      window.Database.ref(`Students/${this.user.User.UserName}/dark`).set(
-        !this.$vuetify.theme.dark
-      );
-    },
     changeSemester(newSemester) {
-      console.log(newSemester);
-
       this.isLoading = true;
       window.Database.ref(
         `Students/${this.user.User.UserName}/currSemester/`
       ).set(newSemester);
       this.getCourses(newSemester);
-
+    },
+    toggleTheme() {
+      window.Database.ref(`Students/${this.user.User.UserName}/dark`).set(
+        !this.$vuetify.theme.dark
+      );
     }
   }
 };
