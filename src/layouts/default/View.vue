@@ -4,7 +4,7 @@
       <v-fade-transition mode="out-in">
         <router-view :key="$route.path" />
       </v-fade-transition>
-      <v-snackbar absolute bottom right class="mb-5" v-model="isShowMessage" timeout="-1">
+      <v-snackbar transition="scroll-y-reverse-transition"  class="mb-5 " v-model="isShowMessage" timeout="-1">
         You don't have any project or br you haven't create any group.
         <template v-slot:action="{ attrs }">
           <v-btn

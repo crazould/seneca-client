@@ -21,7 +21,7 @@
             v-model="phaseDatePicker"
             :close-on-content-click="false"
             :nudge-right="40"
-            transition="scale-transition"
+            transition="scroll-y-transition"
             offset-y
             min-width="auto"
           >
@@ -74,7 +74,7 @@
             v-model="categoryDatePicker"
             :close-on-content-click="false"
             :nudge-right="40"
-            transition="scale-transition"
+            transition="scroll-y-transition"
             offset-y
             min-width="auto"
           >
@@ -176,7 +176,7 @@
                 ></v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
-                <v-menu offset-y min-width="150" transition="scale-transition">
+                <v-menu offset-y min-width="150" transition="scroll-y-transition">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on">
                       <v-icon>
@@ -226,7 +226,7 @@
                   <v-menu
                     offset-y
                     min-width="150"
-                    transition="scale-transition"
+                    transition="scroll-y-transition"
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn icon v-bind="attrs" v-on="on">
@@ -264,7 +264,7 @@
                 {{ task.Note }}
               </v-list-item-content>
               <v-list-item-action>
-                <v-menu offset-y min-width="150" transition="scale-transition">
+                <v-menu offset-y min-width="150" transition="scroll-y-transition">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on">
                       <v-icon>
@@ -287,7 +287,7 @@
         </v-list-group>
       </v-list>
     </v-card>
-    <v-snackbar absolute bottom right class="mb-5" v-model="isShowMessage" :timeout="3000">
+    <v-snackbar transition="scroll-y-reverse-transition"  class="mb-5" v-model="isShowMessage" :timeout="3000">
       {{ message }}
       <template v-slot:action="{ attrs }">
         <v-btn color="error" text v-bind="attrs" @click="isShowMessage = false">

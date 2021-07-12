@@ -8,7 +8,7 @@
         :color="color"
         :width="fullHeader ? '100%' : undefined"
         class="overflow-hidden mt-n9 transition-swing v-card--material__sheet"
-        elevation="6"
+        elevation="10"
         max-width="100%"
         rounded
       >

@@ -1,55 +1,46 @@
 <template>
   <v-container fluid>
-    <v-row v-if="courses.length != 0">
-      <v-col>
-        <v-row v-for="(course, index) in courses" :key="index">
-          <v-col>
-            <v-card min-height="280">
-              <v-card-title class="font-weight-light text-h3">
-                {{ course.subject.Subject }}
-              </v-card-title>
-              <v-card-subtitle>
-                {{ course.subject.Class }}
-              </v-card-subtitle>
-              <v-card-text class="my-5">
-                <v-row>
-                  <v-col
-                    v-for="(chart, i) in chartSets[index]"
-                    :key="`chart-${i}`"
-                    cols="12"
-                    md="6"
-                    lg="4"
-                  >
-                    <material-chart-card
-                      :color="chart.color"
-                      :data="chart.data"
-                      :options="chart.options"
-                      :responsive-options="chart.responsiveOptions"
-                      :title="chart.title"
-                      :type="chart.type"
-                      class="pb-5"
-                    >
-                    </material-chart-card>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn
-                  :color="$vuetify.theme.themes.dark.primary"
-                  link
-                  class="white--text"
-                  absolute
-                  bottom
-                  @click="setCurrCourse(course)"
+    <div v-if="courses.length != 0">
+      <v-row v-for="(course, index) in courses" :key="index">
+        <v-col>
+          <v-card min-height="280" class="pa-2" elevation="6">
+            <v-card-title
+              class="font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
+              style="display: block"
+            >
+              {{ course.subject.Subject }}
+            </v-card-title>
+            <v-card-subtitle
+              class="font-weight-light text-h6 text-sm-h5 text-md-h4"
+            >
+              {{ course.subject.Class }}
+            </v-card-subtitle>
+            <v-card-text class="mb-5">
+              <v-row>
+                <v-col
+                  v-for="(chart, i) in chartSets[index]"
+                  :key="`chart-${i}`"
+                  cols="12"
+                  md="6"
+                  lg="4"
                 >
-                  Manage Project
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
+                  <material-chart-card
+                    :color="chart.color"
+                    :data="chart.data"
+                    :options="chart.options"
+                    :responsive-options="chart.responsiveOptions"
+                    :title="chart.title"
+                    :type="chart.type"
+                    class="pb-5"
+                  >
+                  </material-chart-card>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
   </v-container>
 </template>
 
@@ -111,9 +102,9 @@ export default {
             "Fe",
             "Ma",
             "Ap",
-            "Mai",
-            "Ju",
-            "Jul",
+            "Ma",
+            "Jn",
+            "Jl",
             "Au",
             "Se",
             "Oc",
@@ -184,10 +175,6 @@ export default {
       this.chartSets = [];
 
       this.courses.forEach(course => {
-        // console.log(course.subject.ClassTransactionId);
-        // console.log(course.group.Group.GroupNumber);
-        // console.log(`Task count: ${}`)
-
         window.Database.ref(
           `Subjects/${course.subject.ClassTransactionId}/Groups/${course.group.Group.GroupNumber}/Phases/`
         ).once("value", s => {
@@ -196,13 +183,13 @@ export default {
           let completedTasks = [];
           let otherTasks = [];
 
-          console.log(`phases ${course.subject.Subject}:`);
-          console.log(phases);
+          // console.log(`phases ${course.subject.Subject}:`);
+          // console.log(phases);
           this.resetChartSetValue();
 
           if (phases == undefined) {
-            console.log("RETURN");
-            console.log(`phases ${course.subject.Subject}:`);
+            // console.log("RETURN");
+            // console.log(`phases ${course.subject.Subject}:`);
             this.chartSets.push(this.chartSet);
 
             return;
@@ -222,8 +209,8 @@ export default {
             });
           }
 
-          console.log(`completed Tasks: `);
-          console.log(completedTasks);
+          // console.log(`completed Tasks: `);
+          // console.log(completedTasks);
 
           completedTasks.forEach(element => {
             let dueDate = new Date(element.DueDate);
@@ -266,11 +253,11 @@ export default {
             this.chartSet[2].options.high = maxValue + maxValue / 3;
           }
 
-          console.log(this.chartSet[0].data.series[0]);
-          console.log(this.chartSet[0].options.high);
+          // console.log(this.chartSet[0].data.series[0]);
+          // console.log(this.chartSet[0].options.high);
 
-          console.log(`other Tasks: `);
-          console.log(otherTasks);
+          // console.log(`other Tasks: `);
+          // console.log(otherTasks);
 
           this.chartSets.push(this.chartSet);
         });
@@ -324,9 +311,9 @@ export default {
               "Fe",
               "Ma",
               "Ap",
-              "Mai",
-              "Ju",
-              "Jul",
+              "Ma",
+              "Jn",
+              "Jl",
               "Au",
               "Se",
               "Oc",

@@ -10,10 +10,14 @@
     <v-row v-for="(course, index) in courses" :key="index">
       <v-col>
         <v-card min-height="180">
-          <v-card-title class="font-weight-light text-h3">
+          <v-card-title class="font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
+              style="display: block"
+          >
             {{ course.subject.Subject }}
           </v-card-title>
-          <v-card-subtitle>
+          <v-card-subtitle
+            class="font-weight-light text-h6 text-sm-h5 text-md-h4"
+          >
             {{ course.subject.Class }}
           </v-card-subtitle>
           <v-card-actions>
@@ -40,7 +44,7 @@ export default {
   name: "ProjectBoard",
   data: () => ({
     courses: [],
-    isLoading: false,
+    isLoading: false
   }),
   computed: {
     ...sync("user", ["currSemester", "currCourses"]),
