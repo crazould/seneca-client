@@ -102,9 +102,7 @@ export default {
   methods: {
     getCourses(newSemester) {
       if (newSemester.value == undefined) return;
-      console.log(newSemester);
       this.courses = 0;
-
       axios
         .get(
           `https://laboratory.binus.ac.id/lapi/api/Binusmaya/GetStudentSubjectsInSemesterWithGroup?semesterId=${newSemester.value}&binusianNumber=${this.user.User.UserName}`,
@@ -115,12 +113,9 @@ export default {
           }
         )
         .then(res => {
-          // console.log(res.data);
           this.courses = res.data.filter(e => {
             return e.group !== null && e.group.Status !== "none";
           });
-          console.log(this.courses);
-
           this.$store.set("user/currCourses", this.courses);
 
           if(this.courses.length === 0){

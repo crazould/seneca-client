@@ -323,7 +323,7 @@ export default {
     taskPriority: "",
     taskNote: "",
     taskCategory: "",
-    inputCategories: ["Open", "On Progress", "Pending", "Compeleted"],
+    inputCategories: ["Open", "On Progress", "Pending", "Completed"],
     categoryDatePicker: false,
     phaseIdx: -1,
     categoryIdx: -1,
