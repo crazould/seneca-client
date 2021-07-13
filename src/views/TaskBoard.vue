@@ -66,7 +66,7 @@
         <v-card-text>
           <v-text-field
             label="Name"
-            prepend-icon="mdi-briefcase-clock"
+            prepend-icon="mdi-file-edit-outline"
             v-model="taskName"
           ></v-text-field>
 
@@ -82,7 +82,7 @@
               <v-text-field
                 v-model="taskDueDate"
                 label="Due Date"
-                prepend-icon="mdi-calendar"
+                prepend-icon="mdi-calendar-outline"
                 readonly
                 v-bind="attrs"
                 v-on="on"
@@ -97,7 +97,7 @@
             label="Priority"
             type="number"
             v-model="taskPriority"
-            prepend-icon="mdi-briefcase-clock"
+            prepend-icon="mdi-calendar-alert"
           ></v-text-field>
 
           <v-combobox
@@ -105,7 +105,7 @@
             v-model="taskCategory"
             :items="inputCategories"
             label="Category"
-            prepend-icon="mdi-briefcase-clock"
+            prepend-icon="mdi-folder-plus-outline  "
           >
           </v-combobox>
 
@@ -113,7 +113,7 @@
             outlined
             label="Note"
             v-model="taskNote"
-            prepend-icon="mdi-briefcase-clock"
+            prepend-icon="mdi-note-outline"
           ></v-textarea>
         </v-card-text>
 

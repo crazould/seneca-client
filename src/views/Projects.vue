@@ -41,7 +41,7 @@
 <script>
 import { sync } from "vuex-pathify";
 export default {
-  name: "ProjectBoard",
+  name: "Projects",
   data: () => ({
     courses: [],
     isLoading: false

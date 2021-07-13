@@ -8,7 +8,7 @@ Vue.use(VueRouter);
 const routes = [
   layout("Default", [
     route("Dashboard"),
-    route("Project Board", null, "project-board"),
+    route("Projects", null, "project-board"),
     route("Task Board", null, "task-board"),
   ]),
   {

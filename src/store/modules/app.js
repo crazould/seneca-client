@@ -13,8 +13,8 @@ const state = {
       to: '/',
     },
     {
-      title: 'Project Board',
-      icon: 'mdi-pencil',
+      title: 'Project',
+      icon: 'mdi-clipboard-text',
       to: '/project-board',
     },
     // {
