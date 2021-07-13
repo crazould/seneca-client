@@ -33,13 +33,16 @@ const router = new VueRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   // use isAuthenticated for debugging
-//   // set false for debugging
-//   // set true for development
-//   let isAuthenticated = true;
-//   if (to.name !== "Login" && !isAuthenticated) next({ name: "Login" });
-//   else return to.path.endsWith("/") ? next() : next(trailingSlash(to.path));
-// });
+router.beforeEach( function(to, from, next) {
+
+  let isAuthenticated = JSON.parse(localStorage.getItem('vue-session-key')).user ? true : false;
+  console.log(isAuthenticated)
+
+  if (to.name !== "Login" && !isAuthenticated) next({ name: "Login" });
+  else if(to.name === "Login" && isAuthenticated) next({ name: "Dashboard" });
+  else return next();
+
+
+});
 
 export default router;

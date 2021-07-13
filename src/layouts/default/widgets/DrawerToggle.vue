@@ -1,7 +1,7 @@
 <template>
   <v-btn
     class="ml-3 mr-4"
-    elevation="1"
+    elevation="3"
     fab
     small
     @click="mini = !mini"

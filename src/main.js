@@ -24,7 +24,6 @@ firebase.analytics();
 const database = firebase.database()
 
 window.Database = database
-window.SubjectsRef = database.ref("Subjects")
 
 Vue.config.productionTip = false
 sync(store, router)

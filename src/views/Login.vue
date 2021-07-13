@@ -42,7 +42,7 @@
                     type="text"
                     required
                     v-model="nim"
-                  ></v-text-field>
+                  />
                   <v-text-field
                     outlined
                     dense
@@ -52,7 +52,7 @@
                     id="Password"
                     required
                     v-model="password"
-                  ></v-text-field>
+                  />
                 </v-form>
               </v-card-text>
               <v-card-actions>

@@ -9,7 +9,6 @@
           Phase Form
         </v-card-title>
 
-        <v-form ref="phaseForm" v-model="phaseFormValidation" lazy-validation>
           <v-card-text>
             <v-text-field
               label="Phase"
@@ -54,7 +53,6 @@
               Cancel
             </v-btn>
           </v-card-actions>
-        </v-form>
       </v-card>
     </v-dialog>
 
@@ -75,7 +73,7 @@
               v-model="taskName"
               :rules="taskNameRules"
               required
-            ></v-text-field>
+            />
 
             <v-menu
               v-model="categoryDatePicker"
@@ -95,6 +93,9 @@
                   v-bind="attrs"
                   required
                   v-on="on"
+                  :error="isTaskDueDateError"
+                  :error-messages="taskDueDateMsg"
+
                 ></v-text-field>
               </template>
               <v-date-picker
@@ -359,8 +360,7 @@ export default {
     taskIdx: -1,
     phaseName: "",
     isAddTaskOnCategory: false,
-    taskFormValidation: false,
-    phaseFormValidation: false,
+    taskFormValidation: true,
     taskNameRules: [v => !!v || "Name can't be empty"],
     priorityRules: [
       v => (v && v > 0) || "Priority can't be lower than 1",
@@ -368,7 +368,9 @@ export default {
     ],
     noteRules: [v => !!v || "Note can't be empty"],
     isPhaseDueDateError: false,
-    phaseDueDateMsg: []
+    phaseDueDateMsg: [],
+    isTaskDueDateError: false,
+    taskDueDateMsg: [],
   }),
   computed: {
     ...sync("user", ["currCourse"])
@@ -388,13 +390,9 @@ export default {
       ).on("value", s => {
         this.phases = [];
         this.phases = Object.assign(this.phases, s.val());
-        // console.log(this.phases);
       });
     },
     setPhaseName() {
-      // console.log(this.phases.length == 0);
-      // console.log(this.phases == null);
-      // console.log(this.phases == undefined);
       if (
         this.phases.length == 0 ||
         this.phases == null ||
@@ -409,32 +407,35 @@ export default {
     },
     addPhase() {
       // phaseDueDateRules: [v => ( phaseName !== 'Backlog' && v <= phases[phases.length-1].DueDate) || `Due Date Must Be Greater than due date of ${phases[phases.length-1].Name}` ],
-      console.log(this.phases.length);
 
       this.phaseDueDateMsg = [];
       this.isPhaseDueDateError = false;
-
       if (
         this.phaseName != "Backlog" &&
         this.phaseDueDate > this.phases[0].DueDate
       ) {
-        console.log(this.phaseDueDate);
-        console.log(this.phases[0].DueDate);
         this.isPhaseDueDateError = true;
-        this.phaseDueDateMsg.push( `${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`);
+        this.phaseDueDateMsg.push(
+          `${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`
+        );
         return;
-      } else if ( this.phaseDueDate < this.phases[this.phases.length-1].DueDate){
-        console.log(this.phaseDueDate);
-        console.log(this.phases[0].DueDate);
+      } else if (
+        this.phases.length >= 2 &&
+        this.phaseDueDate < this.phases[this.phases.length - 1].DueDate
+      ) {
         this.isPhaseDueDateError = true;
-        this.phaseDueDateMsg.push( `${this.phaseName} due date must be more than or equal to ${this.phases[this.phases.length - 1].Name}'s due date`);
+        this.phaseDueDateMsg.push(
+          `${this.phaseName} due date must be more than or equal to ${
+            this.phases[this.phases.length - 1].Name
+          }'s due date`
+        );
         return;
       }
 
       this.phaseDueDateMsg = [];
       this.isPhaseDueDateError = false;
       this.isLoading = true;
-      
+
       let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx;
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}`
@@ -518,7 +519,22 @@ export default {
     changeTask() {
       if (!this.$refs.taskForm.validate()) return;
 
+      this.isTaskDueDateError = false;
+      this.taskDueDateMsg = [];
+
+      if (this.taskDueDate > this.phases[this.phaseIdx].DueDate) {
+        this.isTaskDueDateError = false;
+        this.taskDueDateMsg = [
+          `Task due date must be less than or equal to ${
+            this.phases[this.phaseIdx].Name
+          }'s due date`
+        ];
+        return;
+      }
+
       this.isLoading = true;
+      this.isTaskDueDateError = false;
+      this.taskDueDateMsg = [];
 
       let task = {
         Name: this.taskName,
@@ -537,11 +553,8 @@ export default {
 
       if (categoryId == -1) {
         categoryId = this.phases[this.phaseIdx].Categories.findIndex(e => {
-          console.log(typeof e.Name);
-          console.log(typeof this.taskCategory);
           return e.Name === this.taskCategory;
         });
-        console.log(categoryId);
         if (categoryId == -1) {
           categoryId = this.phases[this.phaseIdx].Categories.length;
         }
@@ -556,7 +569,6 @@ export default {
         this.phases[this.phaseIdx].Categories[categoryId]
       ) {
         // if exist then check if has a Tasks or not, or is in edit state
-        console.log(this.taskIdx);
 
         if (this.taskIdx != -1) {
           // if in edit state then use taskIdx
@@ -580,8 +592,6 @@ export default {
         };
       }
 
-      console.log(task);
-      console.log(taskId);
 
       window.Database.ref(refLink)
         .set(task)
@@ -601,6 +611,8 @@ export default {
         });
     },
     addTaskOnCategory(phaseIdx, categoryIdx) {
+      this.categoryDialog = !this.categoryDialog;
+
       this.isAddTaskOnCategory = true;
       this.phaseIdx = phaseIdx;
       this.categoryIdx = categoryIdx;
@@ -613,10 +625,12 @@ export default {
         .substr(0, 10);
       this.taskNote = "";
       this.taskPriority = 1;
-
-      this.categoryDialog = !this.categoryDialog;
+      
+     
     },
     addTaskOnPhase(idx) {
+      this.categoryDialog = !this.categoryDialog;
+
       this.isAddTaskOnCategory = false;
       this.phaseIdx = idx;
 
@@ -629,8 +643,7 @@ export default {
       this.taskNote = "";
       this.taskPriority = 1;
       this.taskCategory = "Open";
-
-      this.categoryDialog = !this.categoryDialog;
+     
     },
     editTask(phaseIdx, categoryIdx, taskIdx) {
       this.isAddTaskOnCategory = false;
@@ -641,8 +654,6 @@ export default {
       let category = this.phases[phaseIdx].Categories[categoryIdx];
       let task = category.Tasks[taskIdx];
 
-      console.log(category);
-      console.log(task);
 
       this.taskName = task.Name;
       this.taskDueDate = task.DueDate;
