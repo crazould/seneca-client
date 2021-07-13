@@ -19,7 +19,7 @@
             This Page is Not on the Map
           </div>
 
-          <v-btn class="mt-8" depressed large to="/">
+          <v-btn class="mt-8" color="primary" depressed large to="/">
             Get me out of here!
           </v-btn>
 
@@ -35,6 +35,5 @@ export default { name: "ErrorView" };
 
 <style lang="sass">
 #error-view
-  background-color: #23D990
   width: 100%
 </style>

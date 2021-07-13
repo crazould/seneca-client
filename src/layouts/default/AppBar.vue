@@ -16,10 +16,10 @@
     <v-toolbar-title class="font-weight-light text-h5" v-text="pageName" />
 
     <v-spacer />
-    <v-combobox
+    <v-select
       v-on:change="changeSemester"
       :items="semesters"
-      :value="currSemester.text"
+      :value="currSemester"
       label="Semester"
       class="mt-8"
       color="secondary"
@@ -83,11 +83,13 @@ export default {
 
   }),
   mounted() {
+    if(this.courses == this.currCourses) return
     this.getSemesters();
+
   },
   computed: {
     ...sync("app", ["drawer", "mini"]),
-    ...sync("user", ["currSemester", "dark", "isShowMessage"]),
+    ...sync("user", ["currSemester", "dark", "isShowMessage", "u"]),
     pageName: get("route/name"),
     user: function() {
       return JSON.parse(this.$session.get("user"));
@@ -101,11 +103,11 @@ export default {
   },
   methods: {
     getCourses(newSemester) {
-      if (newSemester.value == undefined) return;
+      if (newSemester == undefined) return;
       this.courses = 0;
       axios
         .get(
-          `https://laboratory.binus.ac.id/lapi/api/Binusmaya/GetStudentSubjectsInSemesterWithGroup?semesterId=${newSemester.value}&binusianNumber=${this.user.User.UserName}`,
+          `https://laboratory.binus.ac.id/lapi/api/Binusmaya/GetStudentSubjectsInSemesterWithGroup?semesterId=${newSemester}&binusianNumber=${this.user.User.UserName}`,
           {
             headers: {
               Authorization: `Bearer ${this.user.Token.token}`

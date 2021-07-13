@@ -63,82 +63,93 @@
           Add Task
         </v-card-title>
 
-        <v-card-text>
-          <v-text-field
-            label="Name"
-            prepend-icon="mdi-file-edit-outline"
-            v-model="taskName"
-          ></v-text-field>
+        <v-form ref="taskForm" v-model="taskFormValidation" lazy-validation>
+          <v-card-text>
+            <v-text-field
+              label="Name"
+              prepend-icon="mdi-file-edit-outline"
+              v-model="taskName"
+              :rules="taskNameRules"
+              required
+            ></v-text-field>
 
-          <v-menu
-            v-model="categoryDatePicker"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scroll-y-transition"
-            offset-y
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
+            <v-menu
+              v-model="categoryDatePicker"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scroll-y-transition"
+              offset-y
+              required
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="taskDueDate"
+                  label="Due Date"
+                  prepend-icon="mdi-calendar-outline"
+                  readonly
+                  v-bind="attrs"
+                  required
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
                 v-model="taskDueDate"
-                label="Due Date"
-                prepend-icon="mdi-calendar-outline"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="taskDueDate"
-              @input="categoryDatePicker = false"
-            ></v-date-picker>
-          </v-menu>
-          <v-text-field
-            label="Priority"
-            type="number"
-            v-model="taskPriority"
-            prepend-icon="mdi-calendar-alert"
-          ></v-text-field>
+                @input="categoryDatePicker = false"
+              ></v-date-picker>
+            </v-menu>
 
-          <v-combobox
-            v-if="isAddTaskOnCategory == false"
-            v-model="taskCategory"
-            :items="inputCategories"
-            label="Category"
-            prepend-icon="mdi-folder-plus-outline  "
-          >
-          </v-combobox>
+            <v-text-field
+              label="Priority"
+              type="number"
+              v-model="taskPriority"
+              prepend-icon="mdi-calendar-alert"
+              :rules="priorityRules"
+            ></v-text-field>
 
-          <v-textarea
-            outlined
-            label="Note"
-            v-model="taskNote"
-            prepend-icon="mdi-note-outline"
-          ></v-textarea>
-        </v-card-text>
+            <v-select
+              v-if="isAddTaskOnCategory == false"
+              v-model="taskCategory"
+              :items="inputCategories"
+              required
+              label="Category"
+              prepend-icon="mdi-folder-plus-outline  "
+            >
+            </v-select>
 
-        <v-divider></v-divider>
+            <v-textarea
+              outlined
+              label="Note"
+              required
+              v-model="taskNote"
+              prepend-icon="mdi-note-outline"
+              :rules="noteRules"
+            ></v-textarea>
+            <v-spacer></v-spacer>
+          </v-card-text>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="changeTask()" :loading="isLoading">
-            Submit
-          </v-btn>
-          <v-btn color="error" @click="categoryDialog = false">
-            Cancel
-          </v-btn>
-        </v-card-actions>
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="changeTask()" :loading="isLoading">
+              Submit
+            </v-btn>
+            <v-btn color="error" @click="categoryDialog = false">
+              Cancel
+            </v-btn>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-dialog>
 
     <v-card>
       <v-card-title
-        class="text-h3 white--text"
+        class="white--text font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
         style="background-color: #0090D1;"
       >
         {{ currCourse.subject.Subject }}
       </v-card-title>
-      <v-divider></v-divider>
 
       <v-card-actions>
         <v-btn color="primary" dense text @click="setPhaseName()"
@@ -146,12 +157,13 @@
         >
         <v-btn color="primary" dense text>Group Discussion</v-btn>
       </v-card-actions>
+      <v-divider></v-divider>
 
       <v-list v-if="phases.length === 0" class="my-5 py-5" nav>
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="text-center text-h3">
-              Your team haven't create product backlog
+              Your group haven't create a product backlog
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -176,7 +188,11 @@
                 ></v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
-                <v-menu offset-y min-width="150" transition="scroll-y-transition">
+                <v-menu
+                  offset-y
+                  min-width="150"
+                  transition="scroll-y-transition"
+                >
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on">
                       <v-icon>
@@ -264,7 +280,11 @@
                 {{ task.Note }}
               </v-list-item-content>
               <v-list-item-action>
-                <v-menu offset-y min-width="150" transition="scroll-y-transition">
+                <v-menu
+                  offset-y
+                  min-width="150"
+                  transition="scroll-y-transition"
+                >
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on">
                       <v-icon>
@@ -287,7 +307,12 @@
         </v-list-group>
       </v-list>
     </v-card>
-    <v-snackbar transition="scroll-y-reverse-transition"  class="mb-5" v-model="isShowMessage" :timeout="3000">
+    <v-snackbar
+      transition="scroll-y-reverse-transition"
+      class="mb-5"
+      v-model="isShowMessage"
+      :timeout="3000"
+    >
       {{ message }}
       <template v-slot:action="{ attrs }">
         <v-btn color="error" text v-bind="attrs" @click="isShowMessage = false">
@@ -329,7 +354,11 @@ export default {
     categoryIdx: -1,
     taskIdx: -1,
     phaseName: false,
-    isAddTaskOnCategory: false
+    isAddTaskOnCategory: false,
+    taskFormValidation: false,
+    taskNameRules: [v => !!v || "Name can't be empty" ],
+    priorityRules: [v => (v && v > 0) || "Priority can't be lower than 1", v => !v.toString().startsWith('0') || "Priority can't starts with zero"],
+    noteRules: [v => !!v || "Note can't be empty"],
   }),
   computed: {
     ...sync("user", ["currCourse"])
@@ -451,6 +480,9 @@ export default {
         });
     },
     changeTask() {
+
+      if(!this.$refs.taskForm.validate()) return
+
       this.isLoading = true;
 
       let task = {
@@ -539,9 +571,13 @@ export default {
       this.categoryIdx = categoryIdx;
 
       this.taskName = "";
-      this.taskDueDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10);
+      this.taskDueDate = new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10);
       this.taskNote = "";
-      this.taskPriority = 0;
+      this.taskPriority = 1;
 
       this.categoryDialog = !this.categoryDialog;
     },
@@ -550,10 +586,14 @@ export default {
       this.phaseIdx = idx;
 
       this.taskName = "";
-      this.taskDueDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10);
+      this.taskDueDate = new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10);
       this.taskNote = "";
-      this.taskPriority = 0;
-      this.taskCategory = "";
+      this.taskPriority = 1;
+      this.taskCategory = "Open";
 
       this.categoryDialog = !this.categoryDialog;
     },
