@@ -9,48 +9,52 @@
           Phase Form
         </v-card-title>
 
-        <v-card-text>
-          <v-text-field
-            label="Phase"
-            disabled
-            prepend-icon="mdi-briefcase-clock"
-            v-model="phaseName"
-          ></v-text-field>
+        <v-form ref="phaseForm" v-model="phaseFormValidation" lazy-validation>
+          <v-card-text>
+            <v-text-field
+              label="Phase"
+              disabled
+              prepend-icon="mdi-briefcase-clock"
+              v-model="phaseName"
+            ></v-text-field>
 
-          <v-menu
-            v-model="phaseDatePicker"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scroll-y-transition"
-            offset-y
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
+            <v-menu
+              v-model="phaseDatePicker"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scroll-y-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="phaseDueDate"
+                  label="Due Date"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                  :error="isPhaseDueDateError"
+                  :error-messages="phaseDueDateMsg"
+                ></v-text-field>
+              </template>
+              <v-date-picker
                 v-model="phaseDueDate"
-                label="Due Date"
-                prepend-icon="mdi-calendar"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="phaseDueDate"
-              @input="phaseDatePicker = false"
-            ></v-date-picker>
-          </v-menu>
-        </v-card-text>
+                @input="phaseDatePicker = false"
+              ></v-date-picker>
+            </v-menu>
+          </v-card-text>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="addPhase()" :loading="isLoading">
-            Submit
-          </v-btn>
-          <v-btn color="error" @click="phaseDialog = false">
-            Cancel
-          </v-btn>
-        </v-card-actions>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="addPhase()" :loading="isLoading">
+              Submit
+            </v-btn>
+            <v-btn color="error" @click="phaseDialog = false">
+              Cancel
+            </v-btn>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-dialog>
 
@@ -353,12 +357,18 @@ export default {
     phaseIdx: -1,
     categoryIdx: -1,
     taskIdx: -1,
-    phaseName: false,
+    phaseName: "",
     isAddTaskOnCategory: false,
     taskFormValidation: false,
-    taskNameRules: [v => !!v || "Name can't be empty" ],
-    priorityRules: [v => (v && v > 0) || "Priority can't be lower than 1", v => !v.toString().startsWith('0') || "Priority can't starts with zero"],
+    phaseFormValidation: false,
+    taskNameRules: [v => !!v || "Name can't be empty"],
+    priorityRules: [
+      v => (v && v > 0) || "Priority can't be lower than 1",
+      v => !v.toString().startsWith("0") || "Priority can't starts with zero"
+    ],
     noteRules: [v => !!v || "Note can't be empty"],
+    isPhaseDueDateError: false,
+    phaseDueDateMsg: []
   }),
   computed: {
     ...sync("user", ["currCourse"])
@@ -378,13 +388,13 @@ export default {
       ).on("value", s => {
         this.phases = [];
         this.phases = Object.assign(this.phases, s.val());
-        console.log(this.phases);
+        // console.log(this.phases);
       });
     },
     setPhaseName() {
-      console.log(this.phases.length == 0);
-      console.log(this.phases == null);
-      console.log(this.phases == undefined);
+      // console.log(this.phases.length == 0);
+      // console.log(this.phases == null);
+      // console.log(this.phases == undefined);
       if (
         this.phases.length == 0 ||
         this.phases == null ||
@@ -398,7 +408,33 @@ export default {
       this.phaseDialog = !this.phaseDialog;
     },
     addPhase() {
+      // phaseDueDateRules: [v => ( phaseName !== 'Backlog' && v <= phases[phases.length-1].DueDate) || `Due Date Must Be Greater than due date of ${phases[phases.length-1].Name}` ],
+      console.log(this.phases.length);
+
+      this.phaseDueDateMsg = [];
+      this.isPhaseDueDateError = false;
+
+      if (
+        this.phaseName != "Backlog" &&
+        this.phaseDueDate > this.phases[0].DueDate
+      ) {
+        console.log(this.phaseDueDate);
+        console.log(this.phases[0].DueDate);
+        this.isPhaseDueDateError = true;
+        this.phaseDueDateMsg.push( `${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`);
+        return;
+      } else if ( this.phaseDueDate < this.phases[this.phases.length-1].DueDate){
+        console.log(this.phaseDueDate);
+        console.log(this.phases[0].DueDate);
+        this.isPhaseDueDateError = true;
+        this.phaseDueDateMsg.push( `${this.phaseName} due date must be more than or equal to ${this.phases[this.phases.length - 1].Name}'s due date`);
+        return;
+      }
+
+      this.phaseDueDateMsg = [];
+      this.isPhaseDueDateError = false;
       this.isLoading = true;
+      
       let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx;
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}`
@@ -480,8 +516,7 @@ export default {
         });
     },
     changeTask() {
-
-      if(!this.$refs.taskForm.validate()) return
+      if (!this.$refs.taskForm.validate()) return;
 
       this.isLoading = true;
 
@@ -624,13 +659,26 @@ export default {
       this.phaseDueDate = this.phases[idx].DueDate;
       this.phaseName = this.phases[idx].Name;
     },
-    changeDateFormat(oldDate){
-      let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-      let newDate = new Date(oldDate)
-      let dateNumber = newDate.getDate()
-      let month = months[newDate.getMonth()]
-      let year = newDate.getFullYear()
-      return `${month} ${dateNumber}, ${year}` 
+    changeDateFormat(oldDate) {
+      let months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+      ];
+      let newDate = new Date(oldDate);
+      let dateNumber = newDate.getDate();
+      let month = months[newDate.getMonth()];
+      let year = newDate.getFullYear();
+      return `${month} ${dateNumber}, ${year}`;
     }
   }
 };
