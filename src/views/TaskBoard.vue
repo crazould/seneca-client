@@ -6,7 +6,7 @@
           class="display-2 font-weight-light white--text"
           style="background-color: #0090D1"
         >
-          Add new phase
+          Phase Form
         </v-card-title>
 
         <v-card-text>
@@ -60,7 +60,7 @@
           class="display-2 font-weight-light white--text"
           style="background-color: #0090D1"
         >
-          Add Task
+          Task Form
         </v-card-title>
 
         <v-form ref="taskForm" v-model="taskFormValidation" lazy-validation>
@@ -183,7 +183,7 @@
                   phase.Name
                 }}</v-list-item-title>
                 <v-list-item-subtitle
-                  v-text="phase.DueDate"
+                  v-text="changeDateFormat(phase.DueDate)"
                   class="text--error"
                 ></v-list-item-subtitle>
               </v-list-item-content>
@@ -274,7 +274,7 @@
               <v-list-item-content>
                 <v-list-item-title v-text="task.Name"></v-list-item-title>
                 <v-list-item-subtitle
-                  v-text="task.DueDate"
+                  v-text="changeDateFormat(task.DueDate)"
                 ></v-list-item-subtitle>
                 {{ task.Priority }}
                 {{ task.Note }}
@@ -410,11 +410,11 @@ export default {
         .then(() => {
           this.message =
             this.phaseIdx === -1
-              ? "New phase has been added 😉"
-              : "Change has been saved 😉";
+              ? "New phase has been added ✨"
+              : "Change has been saved ✨";
         })
         .catch(() => {
-          this.message = "Something went wrong 😢";
+          this.message = "Something went wrong 😥";
         })
         .finally(() => {
           this.isShowMessage = true;
@@ -432,10 +432,10 @@ export default {
       )
         .set(this.phases)
         .then(() => {
-          this.message = "Phase has been removed 😉";
+          this.message = "Phase has been removed ✨";
         })
         .catch(() => {
-          this.message = "Something went wrong 😢";
+          this.message = "Something went wrong 😥";
         })
         .finally(() => {
           this.isShowMessage = true;
@@ -450,10 +450,10 @@ export default {
       )
         .set(this.phases[phaseIdx].Categories[categoryIdx].Tasks)
         .then(() => {
-          this.message = "Task has been removed 😉";
+          this.message = "Task has been removed ✨";
         })
         .catch(() => {
-          this.message = "Something went wrong 😢";
+          this.message = "Something went wrong 😥";
         })
         .finally(() => {
           this.isShowMessage = true;
@@ -469,10 +469,10 @@ export default {
       )
         .set(this.phases[phaseIdx].Categories)
         .then(() => {
-          this.message = "Category has been removed 😉";
+          this.message = "Category has been removed ✨";
         })
         .catch(() => {
-          this.message = "Something went wrong 😢";
+          this.message = "Something went wrong 😥";
         })
         .finally(() => {
           this.isShowMessage = true;
@@ -551,10 +551,10 @@ export default {
       window.Database.ref(refLink)
         .set(task)
         .then(() => {
-          this.message = "New task has been added 😉";
+          this.message = "New task has been added ✨";
         })
         .catch(() => {
-          this.message = "Something went wrong 😢";
+          this.message = "Something went wrong 😥";
         })
         .finally(() => {
           this.categoryDialog = false;
@@ -623,6 +623,14 @@ export default {
       this.phaseName = this.phases[idx].Name;
       this.phaseDueDate = this.phases[idx].DueDate;
       this.phaseName = this.phases[idx].Name;
+    },
+    changeDateFormat(oldDate){
+      let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      let newDate = new Date(oldDate)
+      let dateNumber = newDate.getDate()
+      let month = months[newDate.getMonth()]
+      let year = newDate.getFullYear()
+      return `${month} ${dateNumber}, ${year}` 
     }
   }
 };
