@@ -7,13 +7,13 @@ import ripple from "vuetify/lib/directives/ripple";
 Vue.use(Vuetify, { directives: { ripple } });
 
 const theme = {
-  primary: "#0090D1",
-  secondary: "#35495e",
-  accent: "#e91e63",
-  info: "#00CAE3",
+  primary: "#2b3ff0",
+  secondary: "#ff9900",
+  accent: "#e62e62",
+  info: "#2b3ff0",
   success: "#4CAF50",
-  warning: "#FB8C00",
-  error: "#B00020",
+  warning: "#ff9900",
+  error: "#e62e62",
 };
 
 

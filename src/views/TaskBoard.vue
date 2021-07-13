@@ -4,7 +4,7 @@
       <v-card>
         <v-card-title
           class="display-2 font-weight-light white--text"
-          style="background-color: #0090D1"
+          style="background-color: #2b3ff0"
         >
           Phase Form
         </v-card-title>
@@ -60,7 +60,7 @@
       <v-card>
         <v-card-title
           class="display-2 font-weight-light white--text"
-          style="background-color: #0090D1"
+          style="background-color: #2b3ff0"
         >
           Task Form
         </v-card-title>
@@ -151,7 +151,7 @@
     <v-card>
       <v-card-title
         class="white--text font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
-        style="background-color: #0090D1;"
+        style="background-color: #2b3ff0;"
       >
         {{ currCourse.subject.Subject }}
       </v-card-title>

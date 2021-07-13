@@ -22,7 +22,7 @@
       :value="currSemester"
       label="Semester"
       class="mt-8"
-      color="secondary"
+      color="primary"
       style="max-width: 240px"
       outlined
       dense

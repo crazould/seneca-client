@@ -93,7 +93,7 @@ export default {
       },
       {
         type: "Line",
-        color: "success",
+        color: "secondary",
         title: "Completed Task by Month",
         time: "updated 4 minutes ago",
         data: {
@@ -116,7 +116,7 @@ export default {
         options: {
           lineSmooth,
           low: 0,
-          high: 10, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+          high: 10, 
           chartPadding: {
             top: 0,
             right: 0,
@@ -127,7 +127,7 @@ export default {
       },
       {
         type: "Bar",
-        color: "accent",
+        color: "error",
         title: "Overall Productivity",
         data: {
           labels: ["Completed (0%)", "Others (0%)"],
@@ -136,7 +136,7 @@ export default {
         options: {
           lineSmooth,
           low: 0,
-          high: 10, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+          high: 10, 
           chartPadding: {
             top: 0,
             right: 0,
@@ -302,7 +302,7 @@ export default {
         },
         {
           type: "Line",
-          color: "success",
+          color: "secondary",
           title: "Completed Task by Month",
           time: "updated 4 minutes ago",
           data: {
@@ -336,7 +336,7 @@ export default {
         },
         {
           type: "Bar",
-          color: "accent",
+          color: "error",
           title: "Overall Productivity",
           data: {
             labels: ["Completed (0%)", "Others (0%)"],
