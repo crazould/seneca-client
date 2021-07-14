@@ -103,6 +103,7 @@ export default {
           this.$session.start();
           this.$session.set("user", JSON.stringify(r.data));
 
+
           window.Database.ref(`Students/${r.data.User.UserName}`).once(
             "value",
             s => {

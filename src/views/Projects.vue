@@ -10,8 +10,9 @@
     <v-row v-for="(course, index) in courses" :key="index">
       <v-col>
         <v-card min-height="180">
-          <v-card-title class="font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
-              style="display: block"
+          <v-card-title
+            class="font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
+            style="display: block"
           >
             {{ course.subject.Subject }}
           </v-card-title>
@@ -40,6 +41,8 @@
 
 <script>
 import { sync } from "vuex-pathify";
+import axios from "axios";
+
 export default {
   name: "Projects",
   data: () => ({
@@ -67,6 +70,9 @@ export default {
         .then(() => {
           this.$router.push("/task-board");
         });
+      axios.post("http://localhost:3000/set-active-group", {
+        course: course
+      });
     }
   }
 };

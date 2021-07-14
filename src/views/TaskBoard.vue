@@ -9,50 +9,50 @@
           Phase Form
         </v-card-title>
 
-          <v-card-text>
-            <v-text-field
-              label="Phase"
-              disabled
-              prepend-icon="mdi-briefcase-clock"
-              v-model="phaseName"
-            ></v-text-field>
+        <v-card-text>
+          <v-text-field
+            label="Phase"
+            disabled
+            prepend-icon="mdi-briefcase-clock"
+            v-model="phaseName"
+          ></v-text-field>
 
-            <v-menu
-              v-model="phaseDatePicker"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scroll-y-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="phaseDueDate"
-                  label="Due Date"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                  :error="isPhaseDueDateError"
-                  :error-messages="phaseDueDateMsg"
-                ></v-text-field>
-              </template>
-              <v-date-picker
+          <v-menu
+            v-model="phaseDatePicker"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scroll-y-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
                 v-model="phaseDueDate"
-                @input="phaseDatePicker = false"
-              ></v-date-picker>
-            </v-menu>
-          </v-card-text>
+                label="Due Date"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                :error="isPhaseDueDateError"
+                :error-messages="phaseDueDateMsg"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="phaseDueDate"
+              @input="phaseDatePicker = false"
+            ></v-date-picker>
+          </v-menu>
+        </v-card-text>
 
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" @click="addPhase()" :loading="isLoading">
-              Submit
-            </v-btn>
-            <v-btn color="error" @click="phaseDialog = false">
-              Cancel
-            </v-btn>
-          </v-card-actions>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="addPhase()" :loading="isLoading">
+            Submit
+          </v-btn>
+          <v-btn color="error" @click="phaseDialog = false">
+            Cancel
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -95,7 +95,6 @@
                   v-on="on"
                   :error="isTaskDueDateError"
                   :error-messages="taskDueDateMsg"
-
                 ></v-text-field>
               </template>
               <v-date-picker
@@ -370,7 +369,7 @@ export default {
     isPhaseDueDateError: false,
     phaseDueDateMsg: [],
     isTaskDueDateError: false,
-    taskDueDateMsg: [],
+    taskDueDateMsg: []
   }),
   computed: {
     ...sync("user", ["currCourse"])
@@ -437,6 +436,10 @@ export default {
       this.isLoading = true;
 
       let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx;
+
+      console.log(this.phaseIdx);
+      console.log(this.phases.length);
+
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}`
       )
@@ -457,7 +460,8 @@ export default {
           this.isShowMessage = true;
           this.phaseDialog = false;
           this.isLoading = false;
-          this.phasesIdx = -1;
+      this.phaseIdx = -1;
+
         });
     },
     deletePhase(phaseIdx) {
@@ -592,7 +596,6 @@ export default {
         };
       }
 
-
       window.Database.ref(refLink)
         .set(task)
         .then(() => {
@@ -625,8 +628,6 @@ export default {
         .substr(0, 10);
       this.taskNote = "";
       this.taskPriority = 1;
-      
-     
     },
     addTaskOnPhase(idx) {
       this.categoryDialog = !this.categoryDialog;
@@ -643,7 +644,6 @@ export default {
       this.taskNote = "";
       this.taskPriority = 1;
       this.taskCategory = "Open";
-     
     },
     editTask(phaseIdx, categoryIdx, taskIdx) {
       this.isAddTaskOnCategory = false;
@@ -653,7 +653,6 @@ export default {
 
       let category = this.phases[phaseIdx].Categories[categoryIdx];
       let task = category.Tasks[taskIdx];
-
 
       this.taskName = task.Name;
       this.taskDueDate = task.DueDate;
@@ -665,10 +664,10 @@ export default {
     },
     editPhase(idx) {
       this.phaseIdx = idx;
-      this.phaseDialog = !this.phasesDialog;
       this.phaseName = this.phases[idx].Name;
       this.phaseDueDate = this.phases[idx].DueDate;
       this.phaseName = this.phases[idx].Name;
+      this.phaseDialog = !this.phasesDialog;
     },
     changeDateFormat(oldDate) {
       let months = [

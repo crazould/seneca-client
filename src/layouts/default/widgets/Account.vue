@@ -16,20 +16,20 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "DefaultAccount",
   data: () => ({}),
   methods: {
     logout() {
-      const user = JSON.parse(this.$session.get("user"))
-      window.Database.ref(
-        `Students/${user.User.UserName}/IsOnline/`
-      )
+      const user = JSON.parse(this.$session.get("user"));
+      window.Database.ref(`Students/${user.User.UserName}/IsOnline/`)
         .set(false)
         .then(() => {
           this.$session.destroy();
           this.$router.push("/login");
         });
+      axios.post("http://localhost:3000/refresh-active-group");
     }
   }
 };

@@ -36,7 +36,6 @@ const router = new VueRouter({
 router.beforeEach( function(to, from, next) {
 
   let isAuthenticated = JSON.parse(localStorage.getItem('vue-session-key')).user ? true : false;
-  console.log(isAuthenticated)
 
   if (to.name !== "Login" && !isAuthenticated) next({ name: "Login" });
   else if(to.name === "Login" && isAuthenticated) next({ name: "Dashboard" });
