@@ -113,7 +113,7 @@ export default {
           });
           if (notif === this.notifications) return;
           this.notifications.push(...notif)
-          console.log(this.notifications);
+          // console.log(this.notifications);
         }
       );
     },

@@ -436,15 +436,21 @@ export default {
 
       let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx;
 
-      // console.log(this.phaseIdx);
-      // console.log(this.phases.length);
+      let currCategories = null
+
+      if(this.phases[idx] != undefined && this.phases[idx].Categories == undefined){
+        currCategories == this.phases[idx].Categories
+      }
+      console.log(this.phaseIdx);
+      console.log(this.phases.length);
 
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}`
       )
         .set({
           Name: this.phaseName,
-          DueDate: this.phaseDueDate
+          DueDate: this.phaseDueDate,
+          Categories: currCategories
         })
         .then(() => {
           this.message =

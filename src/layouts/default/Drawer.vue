@@ -63,9 +63,9 @@
           v-on="$listeners"
         >
           <v-list-item-icon class="my-2 align-self-center">
-              <v-badge bordered color="accent" overlap :value="notifications.length">
+              <v-badge bordered color="accent" overlap :value="unViewedNotif">
                 <template v-slot:badge>
-                  <span>{{ notifications.length }}</span>
+                  <span>{{ unViewedNotif }}</span>
                 </template>
                 <v-icon>mdi-bell</v-icon>
               </v-badge>
@@ -138,6 +138,9 @@ export default {
     ...sync("app", ["drawer", "drawerImage", "mini"]),
     user: function() {
       return JSON.parse(this.$session.get("user"));
+    },
+    unViewedNotif: function(){
+      return this.notifications.filter(c => c.isViewed && c.isViewed[this.user.User.UserName] == false).length
     }
   },
   methods: {

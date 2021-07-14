@@ -5,7 +5,7 @@
         <router-view :key="$route.path" />
       </v-fade-transition>
       <v-snackbar transition="scroll-y-reverse-transition"  class="mb-5 " v-model="isShowMessage" timeout="-1">
-        You don't have any project or br you haven't create any group.
+        You don't have any project or you haven't create any group.
         <template v-slot:action="{ attrs }">
           <v-btn
             color="error"

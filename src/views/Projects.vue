@@ -69,6 +69,24 @@ export default {
         .then(() => {
           this.$router.push("/task-board");
         });
+      
+      window.Database.ref(`Subjects/${course.group.Group.ClassTransactionId}/`).get().then(s => {
+        if(s.exists()) return
+
+        window.Database.ref(`Subjects/${course.group.Group.ClassTransactionId}/`).set({
+          ClassTransactionId: course.group.Group.ClassTransactionId,
+          Subject: course.subject.Subject,
+        })
+
+      })
+
+      window.Database.ref(`Subjects/${course.group.Group.ClassTransactionId}/Groups/${course.group.Group.GroupNumber}/`).get().then(s => {
+        if(s.exists()) return
+        window.Database.ref(`Subjects/${course.group.Group.ClassTransactionId}/Groups/${course.group.Group.GroupNumber}/`).set({
+          GroupNumber: course.group.Group.GroupNumber,
+        })
+      })
+
     }
   }
 };
