@@ -10,6 +10,7 @@ const routes = [
     route("Dashboard"),
     route("Projects", null, "project-board"),
     route("Task Board", null, "task-board"),
+    route("Notifications", null, "notifications"),
   ]),
   {
     path: "/login",

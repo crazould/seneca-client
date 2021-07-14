@@ -405,7 +405,6 @@ export default {
       this.phaseDialog = !this.phaseDialog;
     },
     addPhase() {
-      // phaseDueDateRules: [v => ( phaseName !== 'Backlog' && v <= phases[phases.length-1].DueDate) || `Due Date Must Be Greater than due date of ${phases[phases.length-1].Name}` ],
 
       this.phaseDueDateMsg = [];
       this.isPhaseDueDateError = false;

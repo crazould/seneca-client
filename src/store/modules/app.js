@@ -17,11 +17,11 @@ const state = {
       icon: 'mdi-clipboard-text',
       to: '/project-board',
     },
-    // {
-    //   title: 'Notifications',
-    //   icon: 'mdi-bell',
-    //   to: '/components/notifications/',
-    // },
+    {
+      title: 'Notifications',
+      icon: 'mdi-bell',
+      to: '/notifications/',
+    },
   ],
 }
 

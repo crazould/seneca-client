@@ -14,6 +14,36 @@
       <v-divider class="mx-3 mb-5" />
       <default-list :items="items" />
     </div>
+
+    <template v-slot:append>
+      <div class="px-2">
+        <v-list expand nav>
+          <v-list-item link style="background-color: #e62e62;" >
+            <v-list-item-icon>
+              <v-icon class=" align-self-center white--text">
+                {{
+                  $vuetify.theme.dark
+                    ? "mdi-moon-waning-crescent"
+                    : "mdi-white-balance-sunny"
+                }}</v-icon
+              >
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="white--text">Dark Mode</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item link style="background-color: #e62e62;" >
+            <v-list-item-icon>
+              <v-icon class=" align-self-center white--text">mdi-logout</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="white--text">Logout</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </div>
+    </template>
   </v-navigation-drawer>
 </template>
 
@@ -31,7 +61,7 @@ export default {
 
   computed: {
     ...get("user", ["dark"]),
-    ...get("app", ["items", "version"]),
+    ...get("app", ["items"]),
     ...sync("app", ["drawer", "drawerImage", "mini"])
   }
 };
