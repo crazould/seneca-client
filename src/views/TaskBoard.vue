@@ -329,6 +329,7 @@
 
 <script>
 import { sync } from "vuex-pathify";
+import axios from "axios";
 
 export default {
   name: "TaskBoard",
@@ -372,7 +373,7 @@ export default {
     taskDueDateMsg: []
   }),
   computed: {
-    ...sync("user", ["currCourse"])
+    ...sync("user", ["currCourse", "currCourses", "notifications"])
   },
   mounted() {
     this.getGroupDetail();
@@ -405,7 +406,6 @@ export default {
       this.phaseDialog = !this.phaseDialog;
     },
     addPhase() {
-
       this.phaseDueDateMsg = [];
       this.isPhaseDueDateError = false;
       if (
@@ -436,8 +436,8 @@ export default {
 
       let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx;
 
-      console.log(this.phaseIdx);
-      console.log(this.phases.length);
+      // console.log(this.phaseIdx);
+      // console.log(this.phases.length);
 
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}`
@@ -451,6 +451,23 @@ export default {
             this.phaseIdx === -1
               ? "New phase has been added ✨"
               : "Change has been saved ✨";
+          axios
+            .post("http://localhost:3000/create-phase-notification", {
+              ClassTransactionId: this.currCourse.subject.ClassTransactionId,
+              GroupNumber: this.currCourse.group.Group.GroupNumber,
+              PhaseIdx: idx,
+              Students: this.currCourse.group.Group.Students,
+              Subject: this.currCourse.subject.Subject
+            })
+            .then(() => {
+              this.currCourses.forEach(course => {
+                this.notifications = []
+                this.getNotifcations(
+                  course.group.Group.ClassTransactionId,
+                  course.group.Group.GroupNumber
+                );
+              });
+            });
         })
         .catch(() => {
           this.message = "Something went wrong 😥";
@@ -459,9 +476,23 @@ export default {
           this.isShowMessage = true;
           this.phaseDialog = false;
           this.isLoading = false;
-      this.phaseIdx = -1;
-
+          this.phaseIdx = -1;
         });
+    },
+    getNotifcations(classId, groupNumber) {
+      window.Database.ref(`Notifications/${classId}/${groupNumber}/`).get().then(
+        s => {
+          let data = s.val();
+          console.log(data)
+          if (data == null) return;
+          let notif = Object.entries(data).map(val => {
+            return val[1];
+          });
+          if (notif === this.notifications) return;
+          this.notifications.push(...notif);
+          console.log(this.notifications);
+        }
+      );
     },
     deletePhase(phaseIdx) {
       this.isLoading = true;

@@ -8,10 +8,7 @@ const state = {
   dark: false,
   isExist: false,
   isShowMessage: false,
-  currSemester: {
-    // "text" : "",
-    // "value" : ""
-  },
+  currSemester: {},
   currCourses: [
     {
       group: {

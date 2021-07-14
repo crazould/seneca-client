@@ -41,7 +41,6 @@
 
 <script>
 import { sync } from "vuex-pathify";
-import axios from "axios";
 
 export default {
   name: "Projects",
@@ -70,9 +69,6 @@ export default {
         .then(() => {
           this.$router.push("/task-board");
         });
-      axios.post("http://localhost:3000/set-active-group", {
-        course: course
-      });
     }
   }
 };

@@ -33,10 +33,7 @@
       absolute
       bottom
     ></v-progress-linear>
-    
   </v-app-bar>
-
-
 </template>
 
 <script>
@@ -48,22 +45,20 @@ export default {
   name: "DefaultBar",
 
   components: {
-    DefaultDrawerToggle: () => import("./widgets/DrawerToggle"),
+    DefaultDrawerToggle: () => import("./widgets/DrawerToggle")
   },
   data: () => ({
     semesters: [],
     courses: [],
-    isLoading: false,
-
+    isLoading: false
   }),
   mounted() {
-    if(this.courses == this.currCourses) return
+    if (this.courses == this.currCourses) return;
     this.getSemesters();
-
   },
   computed: {
     ...sync("app", ["drawer", "mini"]),
-    ...sync("user", ["currSemester", "dark", "isShowMessage"]),
+    ...sync("user", ["currSemester", "dark", "isShowMessage", "notifications"]),
     pageName: get("route/name"),
     user: function() {
       return JSON.parse(this.$session.get("user"));
@@ -91,17 +86,36 @@ export default {
           this.courses = res.data.filter(e => {
             return e.group !== null && e.group.Status !== "none";
           });
+
           this.$store.set("user/currCourses", this.courses);
 
-          if(this.courses.length === 0){
+          if (this.courses.length === 0) {
             this.isShowMessage = true;
+          } else {
+            this.notifications = [];
+            this.courses.forEach(course => {
+              this.getNotifcations(
+                course.group.Group.ClassTransactionId,
+                course.group.Group.GroupNumber
+              );
+            });
           }
-
-        })
-        .catch(error => {
-          console.log(error);
         })
         .finally(() => (this.isLoading = false));
+    },
+    getNotifcations(classId, groupNumber) {
+      window.Database.ref(`Notifications/${classId}/${groupNumber}/`).get().then(
+        s => {
+          let data = s.val();
+          if (data == null) return;
+          let notif = Object.entries(data).map(val => {
+            return val[1];
+          });
+          if (notif === this.notifications) return;
+          this.notifications.push(...notif)
+          console.log(this.notifications);
+        }
+      );
     },
     getSemesters() {
       axios

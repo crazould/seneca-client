@@ -63,7 +63,7 @@
           v-on="$listeners"
         >
           <v-list-item-icon class="my-2 align-self-center">
-              <v-badge bordered color="accent" overlap>
+              <v-badge bordered color="accent" overlap :value="notifications.length">
                 <template v-slot:badge>
                   <span>{{ notifications.length }}</span>
                 </template>
@@ -123,7 +123,6 @@
 <script>
 // Utilities
 import { get, sync } from "vuex-pathify";
-import axios from "axios";
 
 export default {
   name: "DefaultDrawer",
@@ -132,10 +131,9 @@ export default {
     DefaultDrawerHeader: () => import("./widgets/DrawerHeader")
   },
   data: () => ({
-    notifications: ["Makan bang", "Minum bang", "Tidur bang"]
   }),
   computed: {
-    ...get("user", ["dark"]),
+    ...sync("user", ["dark", "notifications"]),
     ...get("app", ["items"]),
     ...sync("app", ["drawer", "drawerImage", "mini"]),
     user: function() {
@@ -155,7 +153,6 @@ export default {
           this.$session.destroy();
           this.$router.push("/login");
         });
-      axios.post("http://localhost:3000/refresh-active-group");
     }
   }
 };
