@@ -461,7 +461,7 @@ export default {
             })
             .then(() => {
               this.currCourses.forEach(course => {
-                this.notifications = []
+                this.notifications = [];
                 this.getNotifcations(
                   course.group.Group.ClassTransactionId,
                   course.group.Group.GroupNumber
@@ -480,10 +480,11 @@ export default {
         });
     },
     getNotifcations(classId, groupNumber) {
-      window.Database.ref(`Notifications/${classId}/${groupNumber}/`).get().then(
-        s => {
+      window.Database.ref(`Notifications/${classId}/${groupNumber}/`)
+        .get()
+        .then(s => {
           let data = s.val();
-          console.log(data)
+          console.log(data);
           if (data == null) return;
           let notif = Object.entries(data).map(val => {
             return val[1];
@@ -491,8 +492,7 @@ export default {
           if (notif === this.notifications) return;
           this.notifications.push(...notif);
           console.log(this.notifications);
-        }
-      );
+        });
     },
     deletePhase(phaseIdx) {
       this.isLoading = true;
@@ -594,7 +594,7 @@ export default {
         }
       }
 
-      let taskId;
+      let taskId = -1;
       let refLink = `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.phaseIdx}/Categories/${categoryId}`;
 
       // check if current category is exist
@@ -630,6 +630,25 @@ export default {
         .set(task)
         .then(() => {
           this.message = "New task has been added ✨";
+          axios
+            .post("http://localhost:3000/create-task-notification", {
+              ClassTransactionId: this.currCourse.subject.ClassTransactionId,
+              GroupNumber: this.currCourse.group.Group.GroupNumber,
+              PhaseIdx: this.phaseIdx,
+              CategoryIdx: categoryId,
+              TaskIdx: taskId,
+              Students: this.currCourse.group.Group.Students,
+              Subject: this.currCourse.subject.Subject
+            })
+            .then(() => {
+              this.currCourses.forEach(course => {
+                this.notifications = [];
+                this.getNotifcations(
+                  course.group.Group.ClassTransactionId,
+                  course.group.Group.GroupNumber
+                );
+              });
+            });
         })
         .catch(() => {
           this.message = "Something went wrong 😥";
