@@ -23,34 +23,10 @@
       label="Semester"
       class="mt-8"
       color="primary"
-      style="max-width: 240px"
+      style="max-width: 260px"
       outlined
       dense
     />
-    <default-notifications />
-    <v-menu bottom left min-width="200" offset-y origin="top right">
-      <template v-slot:activator="{ attrs, on }">
-        <v-btn
-          @click="toggleTheme()"
-          class="ml-2"
-          min-width="0"
-          text
-          v-bind="attrs"
-          v-on="on"
-        >
-          <v-icon>
-            {{
-              $vuetify.theme.dark
-                ? "mdi-moon-waning-crescent"
-                : "mdi-white-balance-sunny"
-            }}
-          </v-icon>
-        </v-btn>
-      </template>
-    </v-menu>
-
-    <default-account />
-
     <v-progress-linear
       :active="isLoading"
       :indeterminate="isLoading"
@@ -72,9 +48,7 @@ export default {
   name: "DefaultBar",
 
   components: {
-    DefaultAccount: () => import("./widgets/Account"),
     DefaultDrawerToggle: () => import("./widgets/DrawerToggle"),
-    DefaultNotifications: () => import("./widgets/Notifications")
   },
   data: () => ({
     semesters: [],
@@ -89,7 +63,7 @@ export default {
   },
   computed: {
     ...sync("app", ["drawer", "mini"]),
-    ...sync("user", ["currSemester", "dark", "isShowMessage", "u"]),
+    ...sync("user", ["currSemester", "dark", "isShowMessage"]),
     pageName: get("route/name"),
     user: function() {
       return JSON.parse(this.$session.get("user"));
@@ -97,7 +71,6 @@ export default {
   },
   watch: {
     currSemester(newSemester) {
-      // console.log(newSemester);
       this.changeSemester(newSemester);
     }
   },
