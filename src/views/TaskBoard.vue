@@ -112,7 +112,7 @@
             ></v-text-field>
 
             <v-select
-              v-if="isAddTaskOnCategory == false"
+              v-if="changeTaskMode != 'ADD_CATEGORY_TASK'"
               v-model="taskCategory"
               :items="inputCategories"
               required
@@ -370,7 +370,8 @@ export default {
     isPhaseDueDateError: false,
     phaseDueDateMsg: [],
     isTaskDueDateError: false,
-    taskDueDateMsg: []
+    taskDueDateMsg: [],
+    changeTaskMode: ""
   }),
   computed: {
     ...sync("user", ["currCourse", "currCourses", "notifications"])
@@ -388,9 +389,9 @@ export default {
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases`
       ).on("value", s => {
-        this.phases = []
-        let data = []
-        data = Object.assign(data, s.val())
+        this.phases = [];
+        let data = [];
+        data = Object.assign(data, s.val());
         this.phases = data;
       });
     },
@@ -410,23 +411,23 @@ export default {
     addPhase() {
       this.phaseDueDateMsg = [];
       this.isPhaseDueDateError = false;
-      if (
-        this.phaseName != "Backlog" &&
-        this.phaseDueDate > this.phases[0].DueDate
-      ) {
-        this.isPhaseDueDateError = true;
-        // this.phaseDueDateMsg.push(`${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`);
-        this.phaseDueDateMsg = [ ...this.phaseDueDateMsg, (`${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`)];
-        return;
-      } else if (
-        this.phases.length >= 2 &&
-        this.phaseDueDate < this.phases[this.phases.length - 1].DueDate
-      ) {
-        this.isPhaseDueDateError = true;
-        this.phaseDueDateMsg.push(`${this.phaseName} due date must be more than or equal to ${this.phases[this.phases.length - 1].Name}'s due date`);
-        this.phaseDueDateMsg = [...this.phaseDueDateMsg, (`${this.phaseName} due date must be more than or equal to ${this.phases[this.phases.length - 1].Name}'s due date`)];
-        return;
-      }
+      // if (
+      //   this.phaseName != "Backlog" &&
+      //   this.phaseDueDate > this.phases[0].DueDate
+      // ) {
+      //   this.isPhaseDueDateError = true;
+      //   // this.phaseDueDateMsg.push(`${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`);
+      //   this.phaseDueDateMsg = [ ...this.phaseDueDateMsg, (`${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`)];
+      //   return;
+      // } else if (
+      //   this.phases.length >= 2 &&
+      //   this.phaseDueDate < this.phases[this.phases.length - 1].DueDate
+      // ) {
+      //   this.isPhaseDueDateError = true;
+      //   // this.phaseDueDateMsg.push(`${this.phaseName} due date must be more than or equal to ${this.phases[this.phases.length - 1].Name}'s due date`);
+      //   this.phaseDueDateMsg = [...this.phaseDueDateMsg, (`${this.phaseName} due date must be more than or equal to ${this.phases[this.phases.length - 1].Name}'s due date`)];
+      //   return;
+      // }
 
       this.phaseDueDateMsg = [];
       this.isPhaseDueDateError = false;
@@ -434,10 +435,13 @@ export default {
 
       let idx = this.phaseIdx == -1 ? this.phases.length : this.phaseIdx;
 
-      let currCategories = null
+      let currCategories = null;
 
-      if(this.phases[idx] != undefined && this.phases[idx].Categories == undefined){
-        currCategories == this.phases[idx].Categories
+      if (
+        this.phases[idx] != undefined &&
+        this.phases[idx].Categories == undefined
+      ) {
+        currCategories == this.phases[idx].Categories;
       }
       // console.log(this.phaseIdx);
       // console.log(this.phases.length);
@@ -489,7 +493,9 @@ export default {
         .then(s => {
           if (!s.exists()) return;
           let data = s.val();
-          let notif = Object.entries(data).map(n => {return n[1];});
+          let notif = Object.entries(data).map(n => {
+            return n[1];
+          });
           if (notif === this.notifications) return;
           this.notifications = [...this.notifications, ...notif];
         });
@@ -553,81 +559,165 @@ export default {
     changeTask() {
       if (!this.$refs.taskForm.validate()) return;
 
-      this.isTaskDueDateError = false;
-      this.taskDueDateMsg = [];
-
-      if (this.taskDueDate > this.phases[this.phaseIdx].DueDate) {
-        this.isTaskDueDateError = false;
-        this.taskDueDateMsg = [
-          `Task due date must be less than or equal to ${
-            this.phases[this.phaseIdx].Name
-          }'s due date`
-        ];
-        return;
-      }
+      // this.isTaskDueDateError = false;
+      // this.taskDueDateMsg = [];
+      // if (this.taskDueDate > this.phases[this.phaseIdx].DueDate) {
+      //   this.isTaskDueDateError = false;
+      //   this.taskDueDateMsg = [
+      //     `Task due date must be less than or equal to ${
+      //       this.phases[this.phaseIdx].Name
+      //     }'s due date`
+      //   ];
+      //   return;
+      // }
+      // this.isTaskDueDateError = false;
+      // this.taskDueDateMsg = [];
 
       this.isLoading = true;
-      this.isTaskDueDateError = false;
-      this.taskDueDateMsg = [];
 
-      let task = {
-        Name: this.taskName,
-        DueDate: this.taskDueDate,
-        Priority: this.taskPriority,
-        Note: this.taskNote
-      };
-
+      let update;
+      let refer = `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.phaseIdx}/`;
       let categoryId;
+      let deleteRef = null
 
-      if (this.categoryIdx == -1) {
-        categoryId = !this.phases[this.phaseIdx].Categories ? 0 : -1;
-      } else {
-        categoryId = this.categoryIdx;
+      switch (this.changeTaskMode) {
+        case "ADD_PHASE_TASK":
+          categoryId = this.phases[this.phaseIdx].Categories ? -1 : 0;
+
+          update = {
+            Name: this.taskCategory,
+            Tasks: [
+              {
+                Name: this.taskName,
+                DueDate: this.taskDueDate,
+                Priority: this.taskPriority,
+                Note: this.taskNote
+              }
+            ]
+          };
+
+          if (categoryId == -1) {
+            categoryId = this.phases[this.phaseIdx].Categories.findIndex(e => {
+              return e.Name === this.taskCategory;
+            });
+
+            if (categoryId == -1) {
+              categoryId = this.phases[this.phaseIdx].Categories.length;
+            } else {
+              this.phases[this.phaseIdx].Categories[categoryId].Tasks = [
+                ...this.phases[this.phaseIdx].Categories[categoryId].Tasks,
+                {
+                  Name: this.taskName,
+                  DueDate: this.taskDueDate,
+                  Priority: this.taskPriority,
+                  Note: this.taskNote
+                }
+              ];
+              update = {
+                Name: this.taskCategory,
+                Tasks: this.phases[this.phaseIdx].Categories[categoryId].Tasks
+              };
+            }
+          }
+
+          refer = refer + "Categories/" + categoryId;
+
+          break;
+        case "ADD_CATEGORY_TASK":
+          categoryId = this.categoryIdx;
+          let taskIdx = 0;
+
+          if (this.phases[this.phaseIdx].Categories[categoryId].Tasks) {
+            taskIdx = this.phases[this.phaseIdx].Categories[categoryId].Tasks
+              .length;
+          }
+
+          update = {
+            Name: this.taskName,
+            DueDate: this.taskDueDate,
+            Priority: this.taskPriority,
+            Note: this.taskNote
+          };
+
+          refer = refer + "Categories/" + categoryId + "/Tasks/" + taskIdx;
+
+          break;
+        case "EDIT_TASK":
+          categoryId = this.phases[this.phaseIdx].Categories.findIndex(e => {
+            return e.Name === this.taskCategory;
+          });
+
+          let taskId = this.taskIdx;
+
+          if (categoryId == this.categoryIdx) {
+            refer = refer + "Categories/" + categoryId + "/Tasks/" + taskId;
+            update = {
+              Name: this.taskName,
+              DueDate: this.taskDueDate,
+              Priority: this.taskPriority,
+              Note: this.taskNote
+            };
+          } else if (categoryId != this.categoryIdx) {
+
+            deleteRef = refer + "Categories/" + this.categoryIdx + "/Tasks/" + taskId;
+
+            // check category exist
+            if (categoryId == -1) {
+              // if not create category with task in it
+              categoryId = this.phases[this.phaseIdx].Categories.length;
+              refer = refer + "Categories/" + categoryId;
+              update = {
+                Name: this.taskCategory,
+                Tasks: [
+                  {
+                    Name: this.taskName,
+                    DueDate: this.taskDueDate,
+                    Priority: this.taskPriority,
+                    Note: this.taskNote
+                  }
+                ]
+              };
+
+            } else if(categoryId != -1){
+
+              // if category exist
+              // check if tasks exist
+              refer = refer + "Categories/";
+              // delete task before
+              this.phases[this.phaseIdx].Categories[this.categoryIdx].Tasks.splice(this.taskIdx, 1)
+              console.log(refer)
+              if (this.phases[this.phaseIdx].Categories[categoryId].Tasks) {
+                // if yes, then push current tasks
+                console.log("TASKS EXIST")
+
+                this.phases[this.phaseIdx].Categories[categoryId].Tasks = [
+                  ...this.phases[this.phaseIdx].Categories[categoryId].Tasks,
+                  {
+                    Name: this.taskName,
+                    DueDate: this.taskDueDate,
+                    Priority: this.taskPriority,
+                    Note: this.taskNote
+                  }
+                ];
+              } else {
+                // if tasks not exist then create Tasks
+                this.phases[this.phaseIdx].Categories[categoryId] = {
+                  Name: this.taskCategory,
+                  Tasks: [{
+                    Name: this.taskName,
+                    DueDate: this.taskDueDate,
+                    Priority: this.taskPriority,
+                    Note: this.taskNote
+                  }]
+                }
+              }
+              update = this.phases[this.phaseIdx].Categories
+            }
+          }
+          break;
       }
-
-      if (categoryId == -1) {
-        categoryId = this.phases[this.phaseIdx].Categories.findIndex(e => {
-          return e.Name === this.taskCategory;
-        });
-        if (categoryId == -1) {
-          categoryId = this.phases[this.phaseIdx].Categories.length;
-        }
-      }
-
-      let taskId = -1;
-      let refLink = `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.phaseIdx}/Categories/${categoryId}`;
-
-      // check if current category is exist
-      if (
-        this.phases[this.phaseIdx].Categories &&
-        this.phases[this.phaseIdx].Categories[categoryId]
-      ) {
-        // if exist then check if has a Tasks or not, or is in edit state
-
-        if (this.taskIdx != -1) {
-          // if in edit state then use taskIdx
-          taskId = this.taskIdx;
-        } else if (this.phases[this.phaseIdx].Categories[categoryId].Tasks) {
-          // if exist then get the last idx
-          taskId = this.phases[this.phaseIdx].Categories[categoryId].Tasks
-            .length;
-        } else {
-          // if not, assign task idx to 0
-          taskId = 0;
-        }
-
-        // finally change refLink to that task
-        refLink = refLink + `/Tasks/${taskId}`;
-      } else {
-        // if not exist, then create a category
-        task = {
-          Name: this.taskCategory,
-          Tasks: [task]
-        };
-      }
-
-      window.Database.ref(refLink)
-        .set(task)
+      window.Database.ref(refer)
+        .set(update)
         .then(() => {
           this.message = "New task has been added ✨";
           axios
@@ -660,42 +750,36 @@ export default {
           this.phaseIdx = -1;
           this.categoryIdx = -1;
           this.taskIdx = -1;
+          this.isAddTaskOnCategory = false;
+          this.changeTaskMode = "";
         });
+     
     },
     addTaskOnCategory(phaseIdx, categoryIdx) {
-      this.categoryDialog = !this.categoryDialog;
-
       this.isAddTaskOnCategory = true;
+      this.changeTaskMode = "ADD_CATEGORY_TASK";
+
       this.phaseIdx = phaseIdx;
       this.categoryIdx = categoryIdx;
 
-      this.taskName = "";
-      this.taskDueDate = new Date(
-        Date.now() - new Date().getTimezoneOffset() * 60000
-      )
-        .toISOString()
-        .substr(0, 10);
-      this.taskNote = "";
-      this.taskPriority = 1;
+      this.resetTaskFormInput();
+
+      this.categoryDialog = !this.categoryDialog;
     },
     addTaskOnPhase(idx) {
-      this.categoryDialog = !this.categoryDialog;
-
       this.isAddTaskOnCategory = false;
+      this.changeTaskMode = "ADD_PHASE_TASK";
+
       this.phaseIdx = idx;
 
-      this.taskName = "";
-      this.taskDueDate = new Date(
-        Date.now() - new Date().getTimezoneOffset() * 60000
-      )
-        .toISOString()
-        .substr(0, 10);
-      this.taskNote = "";
-      this.taskPriority = 1;
-      this.taskCategory = "Open";
+      this.resetTaskFormInput();
+
+      this.categoryDialog = !this.categoryDialog;
     },
     editTask(phaseIdx, categoryIdx, taskIdx) {
       this.isAddTaskOnCategory = false;
+      this.changeTaskMode = "EDIT_TASK";
+
       this.phaseIdx = phaseIdx;
       this.categoryIdx = categoryIdx;
       this.taskIdx = taskIdx;
@@ -710,6 +794,17 @@ export default {
       this.taskCategory = category.Name;
 
       this.categoryDialog = !this.categoryDialog;
+    },
+    resetTaskFormInput() {
+      this.taskName = "";
+      this.taskDueDate = new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10);
+      this.taskNote = "";
+      this.taskPriority = 1;
+      this.taskCategory = "Open";
     },
     editPhase(idx) {
       this.phaseIdx = idx;

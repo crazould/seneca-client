@@ -126,7 +126,7 @@ export default {
         }
       },
       {
-        type: "Bar",
+        type: "Pie",
         color: "error",
         title: "Overall Productivity",
         data: {

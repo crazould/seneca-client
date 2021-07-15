@@ -60,6 +60,8 @@
         validator: v => ['Bar', 'Line', 'Pie'].includes(v),
       },
     },
+    mounted(){
+    }
   }
 </script>
 
