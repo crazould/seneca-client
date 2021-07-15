@@ -178,8 +178,7 @@ export default {
         window.Database.ref(
           `Subjects/${course.subject.ClassTransactionId}/Groups/${course.group.Group.GroupNumber}/Phases/`
         ).once("value", s => {
-          let phases = [];
-          phases = s.val();
+          let phases =  s.val();
           let completedTasks = [];
           let otherTasks = [];
 
@@ -190,7 +189,9 @@ export default {
           if (phases == undefined) {
             // console.log("RETURN");
             // console.log(`phases ${course.subject.Subject}:`);
-            this.chartSets.push(this.chartSet);
+
+            // this.chartSets.push(this.chartSet);
+            this.chartSets = [...this.chartSets, this.chartSet]
 
             return;
           }
@@ -200,9 +201,11 @@ export default {
               if (phase.Categories != undefined) {
                 phase.Categories.forEach(category => {
                   if (category.Name == "Completed") {
-                    completedTasks = completedTasks.concat(category.Tasks);
+                    // completedTasks =  completedTasks.concat(category.Tasks);
+                    completedTasks =  [...completedTasks, ...category.Tasks];
                   } else {
-                    otherTasks = otherTasks.concat(category.Tasks);
+                    otherTasks = [...otherTasks, ...category.Tasks];
+                    // otherTasks = otherTasks.concat(category.Tasks);
                   }
                 });
               }
@@ -211,14 +214,20 @@ export default {
 
           // console.log(`completed Tasks: `);
           // console.log(completedTasks);
+          // let countDay = [], countMonth = []
 
           completedTasks.forEach(element => {
             let dueDate = new Date(element.DueDate);
             let dayIdx = dueDate.getDay();
             let monthIdx = dueDate.getMonth();
-            this.chartSet[0].data.series[0][dayIdx]++;
-            this.chartSet[1].data.series[0][monthIdx]++;
+            this.chartSet[0].data.series[0][dueDate.getDay()]++;
+            this.chartSet[1].data.series[0][dueDate.getMonth()]++;
+            // countDay[dueDate.getDay()]++;
+            // countMonth[dueDate.getMonth()]++;
           });
+
+          // this.chartSet[0].data.series[0] = countDay
+          // this.chartSet[1].data.series[0] = countMonth
 
           let totalTasks = completedTasks.length + otherTasks.length;
 
@@ -259,7 +268,8 @@ export default {
           // console.log(`other Tasks: `);
           // console.log(otherTasks);
 
-          this.chartSets.push(this.chartSet);
+          // this.chartSets.push(this.chartSet);
+          this.chartSets = [...this.chartSets, this.chartSet]
         });
       });
     },
