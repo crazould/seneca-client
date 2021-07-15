@@ -41,6 +41,18 @@
         </v-col>
       </v-row>
     </div>
+    <div v-else>
+      <v-row>
+        <v-col>
+          <material-alert
+            icon="mdi-alert"
+            class="text-body-1"
+          >
+            No data available 😣
+          </material-alert>
+        </v-col>
+      </v-row>
+    </div>
   </v-container>
 </template>
 
@@ -116,7 +128,7 @@ export default {
         options: {
           lineSmooth,
           low: 0,
-          high: 10, 
+          high: 10,
           chartPadding: {
             top: 0,
             right: 0,
@@ -136,7 +148,7 @@ export default {
         options: {
           lineSmooth,
           low: 0,
-          high: 10, 
+          high: 10,
           chartPadding: {
             top: 0,
             right: 0,
@@ -164,7 +176,7 @@ export default {
     }
   },
   mounted() {
-    this.courses = []
+    this.courses = [];
     this.courses = this.$store.get("user/currCourses");
     this.setChartData();
   },
@@ -179,7 +191,7 @@ export default {
         window.Database.ref(
           `Subjects/${course.subject.ClassTransactionId}/Groups/${course.group.Group.GroupNumber}/Phases/`
         ).once("value", s => {
-          let phases =  s.val();
+          let phases = s.val();
           let completedTasks = [];
           let otherTasks = [];
 
@@ -202,7 +214,7 @@ export default {
               if (phase.Categories != undefined) {
                 phase.Categories.forEach(category => {
                   if (category.Name == "Completed") {
-                    completedTasks =  completedTasks.concat(category.Tasks);
+                    completedTasks = completedTasks.concat(category.Tasks);
                     // completedTasks =  [...completedTasks, ...category.Tasks];
                   } else {
                     // otherTasks = [...otherTasks, ...category.Tasks];

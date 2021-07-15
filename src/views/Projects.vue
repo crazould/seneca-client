@@ -6,36 +6,49 @@
       absolute
       top
     ></v-progress-linear>
-
-    <v-row v-for="(course, index) in courses" :key="index">
-      <v-col>
-        <v-card min-height="180">
-          <v-card-title
-            class="font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
-            style="display: block"
-          >
-            {{ course.subject.Subject }}
-          </v-card-title>
-          <v-card-subtitle
-            class="font-weight-light text-h6 text-sm-h5 text-md-h4"
-          >
-            {{ course.subject.Class }}
-          </v-card-subtitle>
-          <v-card-actions>
-            <v-btn
-              :color="$vuetify.theme.themes.dark.primary"
-              link
-              class="white--text"
-              absolute
-              bottom
-              @click="setCurrCourse(course)"
+    <div v-if="courses.length != 0">
+      <v-row v-for="(course, index) in courses" :key="index">
+        <v-col>
+          <v-card min-height="180">
+            <v-card-title
+              class="font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
+              style="display: block"
             >
-              Manage Project
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+              {{ course.subject.Subject }}
+            </v-card-title>
+            <v-card-subtitle
+              class="font-weight-light text-h6 text-sm-h5 text-md-h4"
+            >
+              {{ course.subject.Class }}
+            </v-card-subtitle>
+            <v-card-actions>
+              <v-btn
+                :color="$vuetify.theme.themes.dark.primary"
+                link
+                class="white--text"
+                absolute
+                bottom
+                @click="setCurrCourse(course)"
+              >
+                Manage Project
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+    <div v-else>
+      <v-row>
+        <v-col>
+          <material-alert
+            icon="mdi-alert"
+            class="text-body-1"
+          >
+            No data available 😣
+          </material-alert>
+        </v-col>
+      </v-row>
+    </div>
   </v-container>
 </template>
 

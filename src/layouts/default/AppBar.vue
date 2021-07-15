@@ -23,7 +23,7 @@
       label="Semester"
       class="mt-8"
       color="primary"
-      style="max-width: 260px"
+      style="max-width: 260px;"
       outlined
       dense
     />

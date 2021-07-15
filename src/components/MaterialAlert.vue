@@ -9,13 +9,14 @@
       v-slot:prepend
     >
       <v-avatar
-        class="align-self-start mt-n9 elevation-6 mr-4"
-        size="38"
+        class="align-self-start mr-4"
+        size="30"
+        rounded
       >
         <v-icon
-          :color="$attrs.color"
-          class="elevation-6 white"
-          light
+          color="accent"
+          class="elevation-6"
+          
         >
           {{ $attrs.icon }}
         </v-icon>
