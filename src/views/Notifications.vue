@@ -1,11 +1,23 @@
 <template>
-  <v-container fluid>
-    <v-data-table
-      :headers="headers"
-      :items="notif"
-      :items-per-page="10"
-      class="elevation-1"
-    ></v-data-table>
+  <v-container>
+    <material-card color="secondary" >
+      <template #heading >
+        <div class="pa-4 white--text text-body-1 font-weight-light">
+          <v-icon class="mr-5">
+            mdi-bell
+          </v-icon>
+          Notification
+        </div>
+      </template>
+      <v-card-text>
+        <v-data-table
+          :headers="headers"
+          :items="notif"
+          class="elevation-1 ml-3 mb-10 mr-10 mt-5"
+          hide-default-header
+        ></v-data-table>
+      </v-card-text>
+    </material-card>
   </v-container>
 </template>
 
@@ -17,7 +29,7 @@ export default {
   data: () => ({
     headers: [
       {
-        text: "Notifications",
+        text: "Notification",
         value: "text",
         sortable: false
       }
@@ -27,7 +39,7 @@ export default {
   watch: {
     notifications(val) {
       this.notif = val;
-    },
+    }
   },
   computed: {
     ...sync("user", ["dark", "notifications", "currCourses"]),

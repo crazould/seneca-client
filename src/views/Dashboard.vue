@@ -1,20 +1,29 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <div v-if="courses.length != 0">
-      <v-row v-for="(course, index) in courses" :key="index">
+      <v-row v-for="(course, index) in courses" :key="index" class="mb-8">
         <v-col>
-          <v-card min-height="280" class="pa-2" elevation="6">
-            <v-card-title
-              class="font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
-              style="display: block"
-            >
-              {{ course.subject.Subject }}
-            </v-card-title>
-            <v-card-subtitle
-              class="font-weight-light text-h6 text-sm-h5 text-md-h4"
-            >
-              {{ course.subject.Class }}
-            </v-card-subtitle>
+
+          <material-card color="primary" full-header class="pa-2" elevation="6">
+            <template #heading>
+              <div
+                class="pa-5 pr-6 white--text font-weight-light text-body-1 text-truncate"
+              >
+                <v-icon class="mr-3">
+                  mdi-chart-bar
+                </v-icon>
+                {{ course.subject.Subject }}
+              </div>
+              <div class="text-caption">
+                New employees on 15th September, 2016
+              </div>
+            </template>
+            <template #subtitle>
+              <div class=" px-5 mt-1 mb-8 text-h4 font-weight-black">
+                Class: {{ course.subject.Class }} <br />
+                Group: {{ course.group.Group.GroupNumber }} <br />
+              </div>
+            </template>
             <v-card-text class="mb-5">
               <v-row>
                 <v-col
@@ -37,17 +46,14 @@
                 </v-col>
               </v-row>
             </v-card-text>
-          </v-card>
+          </material-card>
         </v-col>
       </v-row>
     </div>
     <div v-else>
       <v-row>
         <v-col>
-          <material-alert
-            icon="mdi-alert"
-            class="text-body-1"
-          >
+          <material-alert icon="mdi-alert" class="text-body-1">
             No data available 😣
           </material-alert>
         </v-col>
