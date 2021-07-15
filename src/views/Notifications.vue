@@ -58,13 +58,13 @@ export default {
 
           for (let key in data) {
             this.readNotifications(classId, groupNumber, key);
-            // notif.push(data[key]);
-            notif == [...notif, data[key]]
+            notif.push(data[key]);
+            // notif == [...notif, data[key]]
           }
 
           if (notif === this.notifications) return;
-          // this.notifications.push(...notif);
-          this.notifications = [...this.notifications, ...notif]
+          this.notifications.push(...notif);
+          // this.notifications = [...this.notifications, ...notif]
           this.notifications.map(r => {
             if (r.isViewed) {
               r.isViewed[this.user.User.UserName] = true;

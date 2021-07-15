@@ -578,7 +578,6 @@ export default {
       let update;
       let refer = `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${this.phaseIdx}/`;
       let categoryId;
-      let deleteRef = null
 
       switch (this.changeTaskMode) {
         case "ADD_PHASE_TASK":
@@ -619,17 +618,14 @@ export default {
               };
             }
           }
-
           refer = refer + "Categories/" + categoryId;
-
           break;
         case "ADD_CATEGORY_TASK":
           categoryId = this.categoryIdx;
           let taskIdx = 0;
 
           if (this.phases[this.phaseIdx].Categories[categoryId].Tasks) {
-            taskIdx = this.phases[this.phaseIdx].Categories[categoryId].Tasks
-              .length;
+            taskIdx = this.phases[this.phaseIdx].Categories[categoryId].Tasks.length;
           }
 
           update = {
@@ -658,8 +654,6 @@ export default {
               Note: this.taskNote
             };
           } else if (categoryId != this.categoryIdx) {
-
-            deleteRef = refer + "Categories/" + this.categoryIdx + "/Tasks/" + taskId;
 
             // check category exist
             if (categoryId == -1) {

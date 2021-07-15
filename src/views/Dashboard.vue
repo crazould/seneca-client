@@ -190,8 +190,8 @@ export default {
             // console.log("RETURN");
             // console.log(`phases ${course.subject.Subject}:`);
 
-            // this.chartSets.push(this.chartSet);
-            this.chartSets = [...this.chartSets, this.chartSet]
+            this.chartSets.push(this.chartSet);
+            // this.chartSets = [...this.chartSets, this.chartSet]
 
             return;
           }
@@ -201,11 +201,11 @@ export default {
               if (phase.Categories != undefined) {
                 phase.Categories.forEach(category => {
                   if (category.Name == "Completed") {
-                    // completedTasks =  completedTasks.concat(category.Tasks);
-                    completedTasks =  [...completedTasks, ...category.Tasks];
+                    completedTasks =  completedTasks.concat(category.Tasks);
+                    // completedTasks =  [...completedTasks, ...category.Tasks];
                   } else {
-                    otherTasks = [...otherTasks, ...category.Tasks];
-                    // otherTasks = otherTasks.concat(category.Tasks);
+                    // otherTasks = [...otherTasks, ...category.Tasks];
+                    otherTasks = otherTasks.concat(category.Tasks);
                   }
                 });
               }
@@ -218,12 +218,10 @@ export default {
 
           completedTasks.forEach(element => {
             let dueDate = new Date(element.DueDate);
-            // let dayIdx = dueDate.getDay();
-            // let monthIdx = dueDate.getMonth();
-            this.chartSet[0].data.series[0][dueDate.getDay()]++;
-            this.chartSet[1].data.series[0][dueDate.getMonth()]++;
-            // countDay[dueDate.getDay()]++;
-            // countMonth[dueDate.getMonth()]++;
+            let dayIdx = dueDate.getDay();
+            let monthIdx = dueDate.getMonth();
+            this.chartSet[0].data.series[0][dayIdx]++;
+            this.chartSet[1].data.series[0][monthIdx]++;
           });
 
           // this.chartSet[0].data.series[0] = countDay
@@ -268,8 +266,8 @@ export default {
           // console.log(`other Tasks: `);
           // console.log(otherTasks);
 
-          // this.chartSets.push(this.chartSet);
-          this.chartSets = [...this.chartSets, this.chartSet]
+          this.chartSets.push(this.chartSet);
+          // this.chartSets = [...this.chartSets, this.chartSet]
         });
       });
     },
