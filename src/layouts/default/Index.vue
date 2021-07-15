@@ -6,6 +6,8 @@
 
     <default-view />
 
+    <default-footer />
+
   </v-app>
 </template>
 
@@ -16,7 +18,8 @@ export default {
   components: {
     DefaultBar: () => import("./AppBar"),
     DefaultDrawer: () => import("./Drawer"),
-    DefaultView: () => import("./View")
+    DefaultView: () => import("./View"),
+    DefaultFooter: () => import("./Footer"),
   },
   data: () => ({
     res: false
@@ -31,7 +34,6 @@ export default {
         let data = {};
         data = Object.assign(data, s.val());
         this.$store.set("user/currSemester", data.currSemester);
-        // console.log(data.currSemester);
         this.$store.set("user/currCourse", data.currCourse);
         if (data.dark == true) {
           this.$vuetify.theme.dark = true;

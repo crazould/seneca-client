@@ -12,7 +12,6 @@
 </template>
 
 <script>
-// Utilities
 
 export default {
   name: "DefaultDrawerHeader",

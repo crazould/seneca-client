@@ -29,7 +29,6 @@ export default {
           this.$session.destroy();
           this.$router.push("/login");
         });
-      axios.post("http://localhost:3000/refresh-active-group");
     }
   }
 };

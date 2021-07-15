@@ -53,7 +53,9 @@ export default {
     isLoading: false
   }),
   mounted() {
-    if (this.courses == this.currCourses) return;
+    // if (this.courses == this.currCourses) return;
+    if (this.semesters.length != 0) return;
+
     this.getSemesters();
   },
   computed: {
@@ -83,16 +85,17 @@ export default {
           }
         )
         .then(res => {
+
           this.courses = res.data.filter(e => {
             return e.group !== null && e.group.Status !== "none";
           });
 
           this.$store.set("user/currCourses", this.courses);
+          this.notifications = [];
 
           if (this.courses.length === 0) {
             this.isShowMessage = true;
           } else {
-            this.notifications = [];
             this.courses.forEach(course => {
               this.getNotifcations(
                 course.group.Group.ClassTransactionId,
@@ -100,20 +103,21 @@ export default {
               );
             });
           }
+
         })
         .finally(() => (this.isLoading = false));
     },
     getNotifcations(classId, groupNumber) {
       window.Database.ref(`Notifications/${classId}/${groupNumber}/`).get().then(
         s => {
+          if (!s.exists()) return;
+
           let data = s.val();
-          if (data == null) return;
-          let notif = Object.entries(data).map(val => {
-            return val[1];
-          });
+          let notif = Object.entries(data).map(n => n[1]);
+
           if (notif === this.notifications) return;
-          this.notifications.push(...notif)
-          // console.log(this.notifications);
+          this.notifications = [...this.notifications, ...notif]
+
         }
       );
     },
@@ -123,7 +127,6 @@ export default {
         .then(r => this.setSemesters(r));
     },
     setSemesters(r) {
-      this.semesters = r.data;
       this.semesters = r.data
         .filter(e => {
           return !e.Description.includes("BCA");
@@ -139,7 +142,7 @@ export default {
       this.isLoading = true;
       window.Database.ref(
         `Students/${this.user.User.UserName}/currSemester/`
-      ).set(newSemester);
+      ).set(newSemester)
       this.getCourses(newSemester);
     },
     toggleTheme() {
