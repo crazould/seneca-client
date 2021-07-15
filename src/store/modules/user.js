@@ -69,12 +69,6 @@ const getters = {
       state.dark
     )
   },
-  // gradient: state => {
-  //   return state.gradients[state.drawer.gradient]
-  // },
-  // image: state => {
-  //   return state.drawer.image === '' ? state.drawer.image : state.images[state.drawer.image]
-  // },
 }
 
 export default {
