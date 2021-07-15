@@ -218,8 +218,8 @@ export default {
 
           completedTasks.forEach(element => {
             let dueDate = new Date(element.DueDate);
-            let dayIdx = dueDate.getDay();
-            let monthIdx = dueDate.getMonth();
+            // let dayIdx = dueDate.getDay();
+            // let monthIdx = dueDate.getMonth();
             this.chartSet[0].data.series[0][dueDate.getDay()]++;
             this.chartSet[1].data.series[0][dueDate.getMonth()]++;
             // countDay[dueDate.getDay()]++;

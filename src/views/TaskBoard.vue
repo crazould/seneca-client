@@ -388,8 +388,10 @@ export default {
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases`
       ).on("value", s => {
-        this.phases = [];
-        this.phases = Object.assign(this.phases, s.val());
+        this.phases = []
+        let data = []
+        data = Object.assign(data, s.val())
+        this.phases = data;
       });
     },
     setPhaseName() {
@@ -413,20 +415,16 @@ export default {
         this.phaseDueDate > this.phases[0].DueDate
       ) {
         this.isPhaseDueDateError = true;
-        this.phaseDueDateMsg.push(
-          `${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`
-        );
+        // this.phaseDueDateMsg.push(`${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`);
+        this.phaseDueDateMsg = [ ...this.phaseDueDateMsg, (`${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`)];
         return;
       } else if (
         this.phases.length >= 2 &&
         this.phaseDueDate < this.phases[this.phases.length - 1].DueDate
       ) {
         this.isPhaseDueDateError = true;
-        this.phaseDueDateMsg.push(
-          `${this.phaseName} due date must be more than or equal to ${
-            this.phases[this.phases.length - 1].Name
-          }'s due date`
-        );
+        this.phaseDueDateMsg.push(`${this.phaseName} due date must be more than or equal to ${this.phases[this.phases.length - 1].Name}'s due date`);
+        this.phaseDueDateMsg = [...this.phaseDueDateMsg, (`${this.phaseName} due date must be more than or equal to ${this.phases[this.phases.length - 1].Name}'s due date`)];
         return;
       }
 
@@ -441,8 +439,8 @@ export default {
       if(this.phases[idx] != undefined && this.phases[idx].Categories == undefined){
         currCategories == this.phases[idx].Categories
       }
-      console.log(this.phaseIdx);
-      console.log(this.phases.length);
+      // console.log(this.phaseIdx);
+      // console.log(this.phases.length);
 
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}`
@@ -489,15 +487,11 @@ export default {
       window.Database.ref(`Notifications/${classId}/${groupNumber}/`)
         .get()
         .then(s => {
+          if (!s.exists()) return;
           let data = s.val();
-          console.log(data);
-          if (data == null) return;
-          let notif = Object.entries(data).map(val => {
-            return val[1];
-          });
+          let notif = Object.entries(data).map(n => {return n[1];});
           if (notif === this.notifications) return;
-          this.notifications.push(...notif);
-          console.log(this.notifications);
+          this.notifications = [...this.notifications, ...notif];
         });
     },
     deletePhase(phaseIdx) {
@@ -748,4 +742,3 @@ export default {
   }
 };
 </script>
-<style lang=""></style>
