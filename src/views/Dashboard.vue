@@ -164,6 +164,7 @@ export default {
     }
   },
   mounted() {
+    this.courses = []
     this.courses = this.$store.get("user/currCourses");
     this.setChartData();
   },

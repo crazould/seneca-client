@@ -497,7 +497,7 @@ export default {
             return n[1];
           });
           if (notif === this.notifications) return;
-          this.notifications = [...this.notifications, ...notif];
+          this.notifications.push(...notif)
         });
     },
     deletePhase(phaseIdx) {
@@ -580,7 +580,8 @@ export default {
       let categoryId;
 
       switch (this.changeTaskMode) {
-        case "ADD_PHASE_TASK":
+        case "ADD_PHASE_TASK": {
+
           categoryId = this.phases[this.phaseIdx].Categories ? -1 : 0;
 
           update = {
@@ -620,7 +621,9 @@ export default {
           }
           refer = refer + "Categories/" + categoryId;
           break;
-        case "ADD_CATEGORY_TASK":
+        }
+        case "ADD_CATEGORY_TASK": {
+          
           categoryId = this.categoryIdx;
           let taskIdx = 0;
 
@@ -634,11 +637,11 @@ export default {
             Priority: this.taskPriority,
             Note: this.taskNote
           };
-
           refer = refer + "Categories/" + categoryId + "/Tasks/" + taskIdx;
-
           break;
-        case "EDIT_TASK":
+        }
+        case "EDIT_TASK": {
+
           categoryId = this.phases[this.phaseIdx].Categories.findIndex(e => {
             return e.Name === this.taskCategory;
           });
@@ -709,30 +712,33 @@ export default {
             }
           }
           break;
+        }
       }
       window.Database.ref(refer)
         .set(update)
         .then(() => {
           this.message = "New task has been added ✨";
-          axios
-            .post("http://localhost:3000/create-task-notification", {
-              ClassTransactionId: this.currCourse.subject.ClassTransactionId,
-              GroupNumber: this.currCourse.group.Group.GroupNumber,
-              PhaseIdx: this.phaseIdx,
-              CategoryIdx: categoryId,
-              TaskIdx: taskId,
-              Students: this.currCourse.group.Group.Students,
-              Subject: this.currCourse.subject.Subject
-            })
-            .then(() => {
-              this.currCourses.forEach(course => {
-                this.notifications = [];
-                this.getNotifcations(
-                  course.group.Group.ClassTransactionId,
-                  course.group.Group.GroupNumber
-                );
+          if(this.phases[this.phaseIdx].Categories[categoryId].Name != "Completed"){
+            axios
+              .post("http://localhost:3000/create-task-notification", {
+                ClassTransactionId: this.currCourse.subject.ClassTransactionId,
+                GroupNumber: this.currCourse.group.Group.GroupNumber,
+                PhaseIdx: this.phaseIdx,
+                CategoryIdx: categoryId,
+                TaskIdx: this.taskIdx,
+                Students: this.currCourse.group.Group.Students,
+                Subject: this.currCourse.subject.Subject
+              })
+              .then(() => {
+                this.currCourses.forEach(course => {
+                  this.notifications = [];
+                  this.getNotifcations(
+                    course.group.Group.ClassTransactionId,
+                    course.group.Group.GroupNumber
+                  );
+                });
               });
-            });
+          }
         })
         .catch(() => {
           this.message = "Something went wrong 😥";
