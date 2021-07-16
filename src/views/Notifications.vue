@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <material-card color="secondary" >
+    <material-card color="primary" >
       <template #heading >
         <div class="pa-4 white--text text-body-1 font-weight-light">
           <v-icon class="mr-5">

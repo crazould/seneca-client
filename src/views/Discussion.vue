@@ -27,65 +27,8 @@ export default {
   data() {
     return {
       messagesLoaded: false,
-      rooms: [
-        {
-          roomId: 1,
-          roomName: "room name",
-          users: [
-            {
-              _id: "2201829035",
-              username: "John Doe",
-              avatar: "../assets/slc-logo.png",
-              status: {
-                state: "online"
-              }
-            },
-            {
-              _id: 1818,
-              username: "Gerry lukman",
-              avatar: "../assets/slc-logo.png",
-              status: {
-                state: "online"
-              }
-            },
-            {
-              _id: 1234,
-              username: "Yohannes",
-              avatar: "../assets/slc-logo.png",
-              status: {
-                state: "offline"
-              }
-            }
-          ]
-        }
-      ],
-      messages: [
-        {
-          _id: 7890,
-          content:
-            "Hey, Can you create a topic for our current group project ?",
-          senderId: 1234,
-          username: "Yohannes",
-          disableActions: false,
-          disableReactions: true
-        },
-        {
-          _id: 7891,
-          content: "Idk, I am busy with my homework right now",
-          senderId: "2201829035",
-          username: "Aiq the hamster slayer",
-          disableActions: false,
-          disableReactions: true
-        },
-        {
-          _id: 7892,
-          content: "Ada wibu lari",
-          senderId: 1818,
-          username: "Gerry",
-          disableActions: false,
-          disableReactions: true
-        }
-      ],
+      rooms: [],
+      messages: [],
       messageActions: [
         {
           name: "replyMessage",
@@ -106,7 +49,7 @@ export default {
           search: "#9ca6af"
         }
       },
-      lastId: 7892
+      lastId: 2
     };
   },
   computed: {
@@ -115,30 +58,62 @@ export default {
     },
     ...get("user", ["dark", "currCourse"])
   },
-  created() {
-    this.fetchData();
+  mounted() {
+    if(this.currCourse){
+      this.fetchData();
+    }
   },
   methods: {
-    fetchData() {
-      this.rooms[0].roomId = this.currCourse.subject.ClassTransactionId;
-      this.rooms[0].roomName = `${this.currCourse.subject.Subject} - Group ${this.currCourse.group.Group.GroupNumber}`;
+    async fetchData() {
+      window.Database.ref(`Rooms/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/`).on("value", s => {
+        if (s.exists()) {
+          let room = s.val();
+          this.rooms = [...this.rooms, room];
+        } else {
+          let users = this.currCourse.group.Group.Students.map(s => {
+            return {
+              _id: s.StudentNumber,
+              username: s.Name
+            };
+          });
+          let room = {
+            roomId: `${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}`,
+            roomName: `${this.currCourse.subject.Subject} - Group ${this.currCourse.group.Group.GroupNumber}`,
+            users
+          };
+          this.rooms = [...this.rooms, room];
+          window.Database.ref(`Rooms/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/`).set(room);
+        }
+      });
+
+      window.Database.ref(`Messages/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/`).on("value", s => {
+        if(s.exists()){
+          console.log("masuk")
+          let messages = s.val()
+          this.messages = messages
+        } else {
+          this.messages = []
+        }
+      })
     },
-    fetchMessages() {
+    async  fetchMessages() {
       this.messagesLoaded = false;
       setTimeout(() => {
         this.messagesLoaded = true;
-      });
+      }, 200);
     },
     async sendMessage({ content, file, replyMessage }) {
-      this.lastId++;
-      console.log(this.lastId++);
 
+      let [date, timestamp] = this.getDate();
+      console.log(date)
+      console.log(timestamp)
       const message = {
-        _id: this.lastId,
+        _id: this.messages.length,
         senderId: this.user.User.UserName,
         content,
-        username: "Aiq the hamster slayer",
-        disableActions: false,
+        date,
+        timestamp,
+        username: this.user.User.Name,
         disableReactions: true
       };
 
@@ -163,10 +138,36 @@ export default {
         }
       }
 
+      window.Database.ref(`Messages/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/${this.messages.length}`).set(message)
       this.messages = [...this.messages, message];
-      console.log(this.messages);
+
       // room id dari parameter
       // if (file) this.uploadFile({ file, messageId: id, roomId })
+    },
+    getDate() {
+      let months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+      ];
+      let newDate = new Date();
+      let dateNumber = newDate.getDate();
+      let month = months[newDate.getMonth()];
+      let hour = newDate.getHours()
+      let minute = newDate.getMinutes()
+      return [`${month} ${dateNumber}`, `${this.zeroPad(hour, 2)}:${this.zeroPad(minute, 2)}`]
+    },
+    zeroPad(num, pad){
+      return String(num).padStart(pad, '0')
     }
   }
 };
