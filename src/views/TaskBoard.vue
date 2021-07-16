@@ -256,7 +256,7 @@
             color="primary"
           >
             <template v-slot:activator>
-                <v-list-item-content>
+                <v-list-item-content :class="colorLabels[category.Name]">
                   <v-list-item-title class="display-1">{{
                     category.Name
                   }}</v-list-item-title>
@@ -356,6 +356,7 @@ export default {
   name: "TaskBoard",
   components: {},
   data: () => ({
+    colorLabels: {"Open": 'blue--text', "On Progress": 'purple--text', "Pending": 'red--text', "Completed": 'green--text',},
     phases: false,
     isShowMessage: false,
     message: "Success",
