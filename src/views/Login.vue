@@ -59,8 +59,7 @@
                 <v-btn
                   @click="login()"
                   outlined
-                  elevation="2"
-                  tile
+                  elevation="3"
                   color="primary"
                   :loading="isLoading"
                   @keypress.enter="login()"

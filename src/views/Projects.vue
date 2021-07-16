@@ -18,7 +18,7 @@
                 class="pa-5 pr-6 white--text font-weight-light text-body-1 text-truncate"
               >
                 <v-icon class="mr-3">
-                  mdi-pencil
+                  mdi-clipboard-list
                 </v-icon>
                 {{ course.subject.Subject }}
               </div>
@@ -42,6 +42,7 @@
                 :disable-pagination="false"
                 :disable-filtering="false"
                 hide-default-footer
+                disable-sort
                 class="mx-8 elevation-3"
               >
               </v-data-table>

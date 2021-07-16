@@ -1,5 +1,5 @@
 <template lang="">
-  <v-container fluid>
+  <v-container>
     <v-dialog v-model="phaseDialog" max-width="500">
       <v-card>
         <v-card-title
@@ -147,7 +147,7 @@
       </v-card>
     </v-dialog>
 
-    <v-card>
+    <!-- <v-card>
       <v-card-title
         class="white--text font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
         style="background-color: #2b3ff0;"
@@ -155,13 +155,29 @@
         {{ currCourse.subject.Subject }}
       </v-card-title>
 
-      <v-card-actions>
-        <v-btn color="primary" dense text @click="setPhaseName()"
-          >Add New Phase</v-btn
+
+    </v-card> -->
+
+    <material-card color="primary" full-header class="px-3">
+      <template #heading>
+        <div
+          class="pa-5 pr-6 white--text font-weight-light text-body-1 text-truncate"
         >
-        <v-btn color="primary" dense text>Group Discussion</v-btn>
-      </v-card-actions>
-      <v-divider></v-divider>
+          <v-icon class="mr-3">
+            mdi-pencil
+          </v-icon>
+          {{ currCourse.subject.Subject }}
+        </div>
+      </template>
+
+      <v-card-actions>
+        <div class="pt-5">
+          <v-btn outlined  class="mr-5" @click="setPhaseName()"
+            >Add New Phase</v-btn
+          >
+          <v-btn outlined >Group Discussion</v-btn>
+        </div>
+      </v-card-actions >
 
       <v-list v-if="phases.length === 0" class="my-5 py-5" nav>
         <v-list-item>
@@ -173,13 +189,15 @@
         </v-list-item>
       </v-list>
 
-      <v-list v-else class="my-5 py-5" nav>
+      <v-list v-else class="mb-5 py-5" two-line>
+
         <v-list-group
           v-for="(phase, i) in phases"
           :key="i"
           :value="false"
           append-icon="mdi-arrow-down-drop-circle-outline"
         >
+
           <template v-slot:activator>
             <v-list-item>
               <v-list-item-content>
@@ -206,13 +224,13 @@
                   </template>
                   <v-list nav>
                     <v-list-item @click="addTaskOnPhase(i)">
-                      <v-list-item-title>Add task</v-list-item-title>
+                      <v-list-item-title class="green--text">Add task</v-list-item-title>
                     </v-list-item>
                     <v-list-item @click="editPhase(i)">
-                      <v-list-item-title>Edit</v-list-item-title>
+                      <v-list-item-title class="orange--text" >Edit</v-list-item-title>
                     </v-list-item>
                     <v-list-item @click="deletePhase(i)">
-                      <v-list-item-title>Delete</v-list-item-title>
+                      <v-list-item-title class="red--text">Delete</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -228,15 +246,16 @@
             </v-list-item-content>
           </v-list-item>
 
+          
           <v-list-group
             v-for="(category, j) in phase.Categories"
             :key="j"
+            no-action
             sub-group
             prepend-icon="mdi-arrow-down-drop-circle-outline"
             color="primary"
           >
             <template v-slot:activator>
-              <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title class="display-1">{{
                     category.Name
@@ -255,15 +274,14 @@
                     </template>
                     <v-list nav>
                       <v-list-item @click="addTaskOnCategory(i, j)">
-                        <v-list-item-title>Add task</v-list-item-title>
+                        <v-list-item-title class="green--text">Add task</v-list-item-title>
                       </v-list-item>
                       <v-list-item @click="deleteCategory(i, j)">
-                        <v-list-item-title>Delete</v-list-item-title>
+                        <v-list-item-title class="red--text">Delete</v-list-item-title>
                       </v-list-item>
                     </v-list>
                   </v-menu>
                 </v-list-item-action>
-              </v-list-item>
             </template>
 
             <v-list-item v-if="!category.Tasks" class="text-center">
@@ -274,14 +292,16 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item v-for="(task, k) in category.Tasks" :key="k">
+            <v-list-item v-for="(task, k) in category.Tasks" :key="k" three-line>
               <v-list-item-content>
-                <v-list-item-title v-text="task.Name"></v-list-item-title>
-                <v-list-item-subtitle
+                <v-list-item-title v-text="task.Name" class="text-h4 font-weight-medium mb-1"></v-list-item-title>
+                <v-list-item-subtitle class="text-body-2"
                   v-text="changeDateFormat(task.DueDate)"
                 ></v-list-item-subtitle>
-                {{ task.Priority }}
-                {{ task.Note }}
+                <v-list-item-subtitle class="text-body-2">
+                  Priority: {{ task.Priority }} <br>
+                  Note: {{ task.Note }}
+                </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
                 <v-menu
@@ -298,10 +318,10 @@
                   </template>
                   <v-list nav>
                     <v-list-item @click="editTask(i, j, k)">
-                      <v-list-item-title>Edit</v-list-item-title>
+                      <v-list-item-title class="orange--text" >Edit</v-list-item-title>
                     </v-list-item>
                     <v-list-item @click="deleteTask(i, j, k)">
-                      <v-list-item-title>Delete</v-list-item-title>
+                      <v-list-item-title class="red--text">Delete</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -310,7 +330,8 @@
           </v-list-group>
         </v-list-group>
       </v-list>
-    </v-card>
+    </material-card>
+
     <v-snackbar
       transition="scroll-y-reverse-transition"
       class="mb-5"
@@ -439,15 +460,19 @@ export default {
 
       if (
         this.phases[idx] != undefined &&
-        this.phases[idx].Categories == undefined
+        this.phases[idx].Categories != undefined
       ) {
-        currCategories == this.phases[idx].Categories;
+        console.log("masuk")
+        currCategories = this.phases[idx].Categories;
       }
-      // console.log(this.phaseIdx);
-      // console.log(this.phases.length);
+
+      console.log(this.phases[idx].Categories)
+      console.log(currCategories)
+      console.log(this.phaseIdx);
+      console.log(this.phases.length);
 
       window.Database.ref(
-        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}`
+        `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}/`
       )
         .set({
           Name: this.phaseName,
@@ -497,7 +522,7 @@ export default {
             return n[1];
           });
           if (notif === this.notifications) return;
-          this.notifications.push(...notif)
+          this.notifications.push(...notif);
         });
     },
     deletePhase(phaseIdx) {
@@ -581,7 +606,6 @@ export default {
 
       switch (this.changeTaskMode) {
         case "ADD_PHASE_TASK": {
-
           categoryId = this.phases[this.phaseIdx].Categories ? -1 : 0;
 
           update = {
@@ -623,12 +647,12 @@ export default {
           break;
         }
         case "ADD_CATEGORY_TASK": {
-          
           categoryId = this.categoryIdx;
           let taskIdx = 0;
 
           if (this.phases[this.phaseIdx].Categories[categoryId].Tasks) {
-            taskIdx = this.phases[this.phaseIdx].Categories[categoryId].Tasks.length;
+            taskIdx = this.phases[this.phaseIdx].Categories[categoryId].Tasks
+              .length;
           }
 
           update = {
@@ -641,7 +665,6 @@ export default {
           break;
         }
         case "EDIT_TASK": {
-
           categoryId = this.phases[this.phaseIdx].Categories.findIndex(e => {
             return e.Name === this.taskCategory;
           });
@@ -657,7 +680,6 @@ export default {
               Note: this.taskNote
             };
           } else if (categoryId != this.categoryIdx) {
-
             // check category exist
             if (categoryId == -1) {
               // if not create category with task in it
@@ -674,18 +696,18 @@ export default {
                   }
                 ]
               };
-
-            } else if(categoryId != -1){
-
+            } else if (categoryId != -1) {
               // if category exist
               // check if tasks exist
               refer = refer + "Categories/";
               // delete task before
-              this.phases[this.phaseIdx].Categories[this.categoryIdx].Tasks.splice(this.taskIdx, 1)
-              console.log(refer)
+              this.phases[this.phaseIdx].Categories[
+                this.categoryIdx
+              ].Tasks.splice(this.taskIdx, 1);
+              console.log(refer);
               if (this.phases[this.phaseIdx].Categories[categoryId].Tasks) {
                 // if yes, then push current tasks
-                console.log("TASKS EXIST")
+                console.log("TASKS EXIST");
 
                 this.phases[this.phaseIdx].Categories[categoryId].Tasks = [
                   ...this.phases[this.phaseIdx].Categories[categoryId].Tasks,
@@ -700,15 +722,17 @@ export default {
                 // if tasks not exist then create Tasks
                 this.phases[this.phaseIdx].Categories[categoryId] = {
                   Name: this.taskCategory,
-                  Tasks: [{
-                    Name: this.taskName,
-                    DueDate: this.taskDueDate,
-                    Priority: this.taskPriority,
-                    Note: this.taskNote
-                  }]
-                }
+                  Tasks: [
+                    {
+                      Name: this.taskName,
+                      DueDate: this.taskDueDate,
+                      Priority: this.taskPriority,
+                      Note: this.taskNote
+                    }
+                  ]
+                };
               }
-              update = this.phases[this.phaseIdx].Categories
+              update = this.phases[this.phaseIdx].Categories;
             }
           }
           break;
@@ -718,7 +742,10 @@ export default {
         .set(update)
         .then(() => {
           this.message = "New task has been added ✨";
-          if(this.phases[this.phaseIdx].Categories[categoryId].Name != "Completed"){
+          if (
+            this.phases[this.phaseIdx].Categories[categoryId].Name !=
+            "Completed"
+          ) {
             axios
               .post("http://localhost:3000/create-task-notification", {
                 ClassTransactionId: this.currCourse.subject.ClassTransactionId,
@@ -753,7 +780,6 @@ export default {
           this.isAddTaskOnCategory = false;
           this.changeTaskMode = "";
         });
-     
     },
     addTaskOnCategory(phaseIdx, categoryIdx) {
       this.isAddTaskOnCategory = true;
@@ -810,7 +836,6 @@ export default {
       this.phaseIdx = idx;
       this.phaseName = this.phases[idx].Name;
       this.phaseDueDate = this.phases[idx].DueDate;
-      this.phaseName = this.phases[idx].Name;
       this.phaseDialog = !this.phasesDialog;
     },
     changeDateFormat(oldDate) {
