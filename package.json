@@ -11,6 +11,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "firebase": "^8.7.0",
+    "uuid": "^8.3.2",
     "vue": "^2.6.11",
     "vue-advanced-chat": "^0.8.6",
     "vue-chartist": "^2.3.1",

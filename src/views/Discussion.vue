@@ -22,6 +22,8 @@
 import ChatWindow from "vue-advanced-chat";
 import "vue-advanced-chat/dist/vue-advanced-chat.css";
 import { get } from "vuex-pathify";
+import { v4 as uuidv4 } from 'uuid';
+
 export default {
   components: {
     ChatWindow
@@ -43,10 +45,6 @@ export default {
           colorSpinner: "#2b3ff0",
           borderStyle: "1px solid #e1e4e8"
         },
-
-        icons: {
-          search: "#9ca6af"
-        }
       },
       lastId: 2
     };
@@ -124,7 +122,11 @@ export default {
         disableActions: false
       };
 
+
       if (file) {
+        file.name = uuidv4()
+        console.log(file.name)
+
         message.file = {
           name: file.name,
           size: file.size,
@@ -133,6 +135,8 @@ export default {
           url: file.localUrl
         };
       }
+
+
 
       if (replyMessage) {
         message.replyMessage = {
@@ -151,7 +155,6 @@ export default {
 
       if (file) this.uploadFile({ file, messageId, roomId });
 
-      // this.messages = [...this.messages, message];
     },
 		openFile({ message }) {
       console.log("masuk bang")
@@ -164,10 +167,8 @@ export default {
       }
       let fileName = file.name + "." + type;
 
-      console.log(file);
-
       const uploadFileRef = window.StorageRef.child(
-        this.user.User.UserName + "/" + messageId + "/" + fileName
+        this.user.User.UserName + "/" + roomId + "/" +messageId + "/" + fileName
       );
 
       const metaData = { contentType: type };
@@ -175,14 +176,12 @@ export default {
       await uploadFileRef
         .put(file.blob, metaData)
         .then(() => {
-          console.log("File uploaded!");
         })
         .catch(err => {
           console.log(err);
         });
 
       const url = await uploadFileRef.getDownloadURL();
-      console.log(url);
 
       window.Database.ref(`Messages/${roomId}/${messageId}/file/`).set({
         name: file.name,
