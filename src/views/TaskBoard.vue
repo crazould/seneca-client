@@ -356,7 +356,7 @@ export default {
   name: "TaskBoard",
   components: {},
   data: () => ({
-    colorLabels: {"Open": 'blue--text', "On Progress": 'purple--text', "Pending": 'red--text', "Completed": 'green--text',},
+    colorLabels: {"Open": 'blue--text', "On Progress": 'deep-purple--text accent-2', "Pending": 'red--text accent-4', "Completed": 'green--text accent-3',},
     phases: false,
     isShowMessage: false,
     message: "Success",
