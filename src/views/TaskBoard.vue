@@ -172,12 +172,12 @@
 
       <v-card-actions>
         <div class="pt-5">
-          <v-btn outlined  class="mr-5" @click="setPhaseName()"
+          <v-btn outlined class="mr-5" @click="setPhaseName()"
             >Add New Phase</v-btn
           >
-          <v-btn outlined >Group Discussion</v-btn>
+          <v-btn outlined to="/discussion">Group Discussion</v-btn>
         </div>
-      </v-card-actions >
+      </v-card-actions>
 
       <v-list v-if="phases.length === 0" class="my-5 py-5" nav>
         <v-list-item>
@@ -190,16 +190,15 @@
       </v-list>
 
       <v-list v-else class="mb-5 py-5" two-line>
-
         <v-list-group
           v-for="(phase, i) in phases"
           :key="i"
           :value="false"
           append-icon="mdi-arrow-down-drop-circle-outline"
+          class="pl-0"
         >
-
           <template v-slot:activator>
-            <v-list-item>
+            <v-list-item class="pl-0">
               <v-list-item-content>
                 <v-list-item-title class="display-2">{{
                   phase.Name
@@ -224,13 +223,19 @@
                   </template>
                   <v-list nav>
                     <v-list-item @click="addTaskOnPhase(i)">
-                      <v-list-item-title class="green--text">Add task</v-list-item-title>
+                      <v-list-item-title class="green--text"
+                        >Add task</v-list-item-title
+                      >
                     </v-list-item>
                     <v-list-item @click="editPhase(i)">
-                      <v-list-item-title class="orange--text" >Edit</v-list-item-title>
+                      <v-list-item-title class="orange--text"
+                        >Edit</v-list-item-title
+                      >
                     </v-list-item>
                     <v-list-item @click="deletePhase(i)">
-                      <v-list-item-title class="red--text">Delete</v-list-item-title>
+                      <v-list-item-title class="red--text"
+                        >Delete</v-list-item-title
+                      >
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -246,7 +251,6 @@
             </v-list-item-content>
           </v-list-item>
 
-          
           <v-list-group
             v-for="(category, j) in phase.Categories"
             :key="j"
@@ -256,32 +260,36 @@
             color="primary"
           >
             <template v-slot:activator>
-                <v-list-item-content :class="colorLabels[category.Name]">
-                  <v-list-item-title class="display-1">{{
-                    category.Name
-                  }}</v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-menu
-                    offset-y
-                    min-width="150"
-                    transition="scroll-y-transition"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn icon v-bind="attrs" v-on="on">
-                        <v-icon> mdi-format-list-bulleted-square </v-icon>
-                      </v-btn>
-                    </template>
-                    <v-list nav>
-                      <v-list-item @click="addTaskOnCategory(i, j)">
-                        <v-list-item-title class="green--text">Add task</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="deleteCategory(i, j)">
-                        <v-list-item-title class="red--text">Delete</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </v-list-item-action>
+              <v-list-item-content :class="colorLabels[category.Name]">
+                <v-list-item-title class="display-1">{{
+                  category.Name
+                }}</v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-menu
+                  offset-y
+                  min-width="150"
+                  transition="scroll-y-transition"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on">
+                      <v-icon> mdi-format-list-bulleted-square </v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list nav>
+                    <v-list-item @click="addTaskOnCategory(i, j)">
+                      <v-list-item-title class="green--text"
+                        >Add task</v-list-item-title
+                      >
+                    </v-list-item>
+                    <v-list-item @click="deleteCategory(i, j)">
+                      <v-list-item-title class="red--text"
+                        >Delete</v-list-item-title
+                      >
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-list-item-action>
             </template>
 
             <v-list-item v-if="!category.Tasks" class="text-center">
@@ -292,14 +300,23 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item v-for="(task, k) in category.Tasks" :key="k" three-line>
+            <v-list-item
+              v-for="(task, k) in category.Tasks"
+              :key="k"
+              three-line
+              class="pl-11"
+            >
               <v-list-item-content>
-                <v-list-item-title v-text="task.Name" class="text-h4 font-weight-medium mb-1"></v-list-item-title>
-                <v-list-item-subtitle class="text-body-2"
+                <v-list-item-title
+                  v-text="task.Name"
+                  class="text-h4 font-weight-medium mb-1"
+                ></v-list-item-title>
+                <v-list-item-subtitle
+                  class="text-body-2"
                   v-text="changeDateFormat(task.DueDate)"
                 ></v-list-item-subtitle>
                 <v-list-item-subtitle class="text-body-2">
-                  Priority: {{ task.Priority }} <br>
+                  Priority: {{ task.Priority }} <br />
                   Note: {{ task.Note }}
                 </v-list-item-subtitle>
               </v-list-item-content>
@@ -318,10 +335,14 @@
                   </template>
                   <v-list nav>
                     <v-list-item @click="editTask(i, j, k)">
-                      <v-list-item-title class="orange--text" >Edit</v-list-item-title>
+                      <v-list-item-title class="orange--text"
+                        >Edit</v-list-item-title
+                      >
                     </v-list-item>
                     <v-list-item @click="deleteTask(i, j, k)">
-                      <v-list-item-title class="red--text">Delete</v-list-item-title>
+                      <v-list-item-title class="red--text"
+                        >Delete</v-list-item-title
+                      >
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -356,7 +377,12 @@ export default {
   name: "TaskBoard",
   components: {},
   data: () => ({
-    colorLabels: {"Open": 'blue--text', "On Progress": 'deep-purple--text accent-2', "Pending": 'red--text accent-4', "Completed": 'green--text accent-3',},
+    colorLabels: {
+      Open: "blue--text",
+      "On Progress": "deep-purple--text accent-2",
+      Pending: "red--text accent-4",
+      Completed: "green--text accent-3"
+    },
     phases: false,
     isShowMessage: false,
     message: "Success",
@@ -463,12 +489,12 @@ export default {
         this.phases[idx] != undefined &&
         this.phases[idx].Categories != undefined
       ) {
-        console.log("masuk")
+        console.log("masuk");
         currCategories = this.phases[idx].Categories;
       }
 
-      console.log(this.phases[idx].Categories)
-      console.log(currCategories)
+      console.log(this.phases[idx].Categories);
+      console.log(currCategories);
       console.log(this.phaseIdx);
       console.log(this.phases.length);
 

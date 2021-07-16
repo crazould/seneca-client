@@ -43,12 +43,12 @@
                 :disable-filtering="false"
                 hide-default-footer
                 disable-sort
-                class="mx-8 elevation-3"
+                class="mx-8 elevation-3 mb-8"
               >
               </v-data-table>
 
             <template #actions>
-              <div class="py-5 ml-3">
+              <div class="mt-5 mb-5 ml-3">
                 <v-btn color="secondary" @click="setCurrCourse(course)">
                   Manage Project
                 </v-btn>
