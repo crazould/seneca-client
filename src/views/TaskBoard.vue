@@ -147,17 +147,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- <v-card>
-      <v-card-title
-        class="white--text font-weight-light text-h4 text-sm-h3 text-md-h2 text-truncate"
-        style="background-color: #2b3ff0;"
-      >
-        {{ currCourse.subject.Subject }}
-      </v-card-title>
-
-
-    </v-card> -->
-
     <material-card color="primary" full-header class="px-3">
       <template #heading>
         <div
@@ -459,23 +448,6 @@ export default {
     addPhase() {
       this.phaseDueDateMsg = [];
       this.isPhaseDueDateError = false;
-      // if (
-      //   this.phaseName != "Backlog" &&
-      //   this.phaseDueDate > this.phases[0].DueDate
-      // ) {
-      //   this.isPhaseDueDateError = true;
-      //   // this.phaseDueDateMsg.push(`${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`);
-      //   this.phaseDueDateMsg = [ ...this.phaseDueDateMsg, (`${this.phaseName} due date must be less than or equal to ${this.phases[0].Name}'s due date`)];
-      //   return;
-      // } else if (
-      //   this.phases.length >= 2 &&
-      //   this.phaseDueDate < this.phases[this.phases.length - 1].DueDate
-      // ) {
-      //   this.isPhaseDueDateError = true;
-      //   // this.phaseDueDateMsg.push(`${this.phaseName} due date must be more than or equal to ${this.phases[this.phases.length - 1].Name}'s due date`);
-      //   this.phaseDueDateMsg = [...this.phaseDueDateMsg, (`${this.phaseName} due date must be more than or equal to ${this.phases[this.phases.length - 1].Name}'s due date`)];
-      //   return;
-      // }
 
       this.phaseDueDateMsg = [];
       this.isPhaseDueDateError = false;
@@ -493,10 +465,10 @@ export default {
         currCategories = this.phases[idx].Categories;
       }
 
-      console.log(this.phases[idx].Categories);
-      console.log(currCategories);
-      console.log(this.phaseIdx);
-      console.log(this.phases.length);
+      // console.log(this.phases[idx].Categories);
+      // console.log(currCategories);
+      // console.log(this.phaseIdx);
+      // console.log(this.phases.length);
 
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}/`
@@ -611,20 +583,6 @@ export default {
     changeTask() {
       if (!this.$refs.taskForm.validate()) return;
 
-      // this.isTaskDueDateError = false;
-      // this.taskDueDateMsg = [];
-      // if (this.taskDueDate > this.phases[this.phaseIdx].DueDate) {
-      //   this.isTaskDueDateError = false;
-      //   this.taskDueDateMsg = [
-      //     `Task due date must be less than or equal to ${
-      //       this.phases[this.phaseIdx].Name
-      //     }'s due date`
-      //   ];
-      //   return;
-      // }
-      // this.isTaskDueDateError = false;
-      // this.taskDueDateMsg = [];
-
       this.isLoading = true;
 
       let update;
@@ -692,13 +650,14 @@ export default {
           break;
         }
         case "EDIT_TASK": {
+
           categoryId = this.phases[this.phaseIdx].Categories.findIndex(e => {
             return e.Name === this.taskCategory;
           });
 
           let taskId = this.taskIdx;
 
-          if (categoryId == this.categoryIdx) {
+          if (this.taskCategory == this.phases[this.phaseIdx].Categories[this.categoryIdx].Name) {
             refer = refer + "Categories/" + categoryId + "/Tasks/" + taskId;
             update = {
               Name: this.taskName,
@@ -706,13 +665,16 @@ export default {
               Priority: this.taskPriority,
               Note: this.taskNote
             };
-          } else if (categoryId != this.categoryIdx) {
+          } else {
+
             // check category exist
             if (categoryId == -1) {
               // if not create category with task in it
               categoryId = this.phases[this.phaseIdx].Categories.length;
-              refer = refer + "Categories/" + categoryId;
-              update = {
+              refer = refer + "Categories/";
+
+              this.phases[this.phaseIdx].Categories[this.categoryIdx].Tasks.splice(this.taskIdx, 1);
+              this.phases[this.phaseIdx].Categories[categoryId] = {
                 Name: this.taskCategory,
                 Tasks: [
                   {
@@ -723,7 +685,10 @@ export default {
                   }
                 ]
               };
+              update = this.phases[this.phaseIdx].Categories;
+
             } else if (categoryId != -1) {
+
               // if category exist
               // check if tasks exist
               refer = refer + "Categories/";
@@ -731,10 +696,9 @@ export default {
               this.phases[this.phaseIdx].Categories[
                 this.categoryIdx
               ].Tasks.splice(this.taskIdx, 1);
-              console.log(refer);
+
               if (this.phases[this.phaseIdx].Categories[categoryId].Tasks) {
                 // if yes, then push current tasks
-                console.log("TASKS EXIST");
 
                 this.phases[this.phaseIdx].Categories[categoryId].Tasks = [
                   ...this.phases[this.phaseIdx].Categories[categoryId].Tasks,

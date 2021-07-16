@@ -40,13 +40,12 @@ export default {
         }
       ],
       styles: {
-        general: {
-          color: "#0a0a0a",
-          colorSpinner: "#2b3ff0",
-          borderStyle: "1px solid #e1e4e8"
+        header: {
+          background: '#2b3ff0',
+          colorRoomName: '#fff',
+          colorRoomInfo: '#fff'
         },
       },
-      lastId: 2
     };
   },
   computed: {
