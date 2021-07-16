@@ -1,17 +1,19 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <chat-window
+      :height="screenHeight"
       :theme="$vuetify.theme.dark == false ? 'light' : 'dark'"
       :current-user-id="user.User.UserName"
       :rooms="rooms"
       :messages="messages"
       :single-room="true"
+      :show-audio="false"
       :messages-loaded="messagesLoaded"
-      :styles="styles"
       :message-actions="messageActions"
+      @open-file="openFile"
       @fetch-messages="fetchMessages"
       @send-message="sendMessage"
-      accepted-files="image/png, image/jpeg, application/pdf"
+      :styles="styles"
     />
   </v-container>
 </template>
@@ -41,10 +43,7 @@ export default {
           colorSpinner: "#2b3ff0",
           borderStyle: "1px solid #e1e4e8"
         },
-        footer: {
-          background: "#f8f9fa",
-          backgroundReply: "rgba(0, 0, 0, 0.08)"
-        },
+
         icons: {
           search: "#9ca6af"
         }
@@ -56,16 +55,21 @@ export default {
     user: function() {
       return JSON.parse(this.$session.get("user"));
     },
-    ...get("user", ["dark", "currCourse"])
+    ...get("user", ["dark", "currCourse"]),
+    screenHeight() {
+      return this.isDevice ? window.innerHeight + "px" : "calc(100vh - 100px)";
+    }
   },
   mounted() {
-    if(this.currCourse){
+    if (this.currCourse) {
       this.fetchData();
     }
   },
   methods: {
     async fetchData() {
-      window.Database.ref(`Rooms/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/`).on("value", s => {
+      window.Database.ref(
+        `Rooms/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/`
+      ).once("value", s => {
         if (s.exists()) {
           let room = s.val();
           this.rooms = [...this.rooms, room];
@@ -82,39 +86,42 @@ export default {
             users
           };
           this.rooms = [...this.rooms, room];
-          window.Database.ref(`Rooms/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/`).set(room);
+          window.Database.ref(
+            `Rooms/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/`
+          ).set(room);
         }
       });
 
-      window.Database.ref(`Messages/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/`).on("value", s => {
-        if(s.exists()){
-          console.log("masuk")
-          let messages = s.val()
-          this.messages = messages
+      window.Database.ref(
+        `Messages/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/`
+      ).on("value", s => {
+        if (s.exists()) {
+          let messages = s.val();
+          this.messages = messages;
+          // console.log(this.messages);
         } else {
-          this.messages = []
+          this.messages = [];
         }
-      })
+      });
     },
-    async  fetchMessages() {
+    async fetchMessages() {
       this.messagesLoaded = false;
       setTimeout(() => {
         this.messagesLoaded = true;
       }, 200);
     },
-    async sendMessage({ content, file, replyMessage }) {
-
+    async sendMessage({ content, roomId, file, replyMessage }) {
       let [date, timestamp] = this.getDate();
-      console.log(date)
-      console.log(timestamp)
+      let messageId = this.messages.length;
       const message = {
-        _id: this.messages.length,
+        _id: messageId,
         senderId: this.user.User.UserName,
         content,
         date,
         timestamp,
         username: this.user.User.Name,
-        disableReactions: true
+        disableReactions: true,
+        disableActions: false
       };
 
       if (file) {
@@ -138,11 +145,51 @@ export default {
         }
       }
 
-      window.Database.ref(`Messages/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/${this.messages.length}`).set(message)
-      this.messages = [...this.messages, message];
+      window.Database.ref(
+        `Messages/${this.currCourse.subject.ClassTransactionId}/${this.currCourse.group.Group.GroupNumber}/${messageId}/`
+      ).set(message);
 
-      // room id dari parameter
-      // if (file) this.uploadFile({ file, messageId: id, roomId })
+      if (file) this.uploadFile({ file, messageId, roomId });
+
+      // this.messages = [...this.messages, message];
+    },
+		openFile({ message }) {
+      console.log("masuk bang")
+			window.open(message.file.url, '_blank')
+		},
+    async uploadFile({ file, messageId, roomId }) {
+      let type = file.extension || file.type;
+      if (type === "svg" || type === "pdf") {
+        type = file.type;
+      }
+      let fileName = file.name + "." + type;
+
+      console.log(file);
+
+      const uploadFileRef = window.StorageRef.child(
+        this.user.User.UserName + "/" + messageId + "/" + fileName
+      );
+
+      const metaData = { contentType: type };
+
+      await uploadFileRef
+        .put(file.blob, metaData)
+        .then(() => {
+          console.log("File uploaded!");
+        })
+        .catch(err => {
+          console.log(err);
+        });
+
+      const url = await uploadFileRef.getDownloadURL();
+      console.log(url);
+
+      window.Database.ref(`Messages/${roomId}/${messageId}/file/`).set({
+        name: file.name,
+        size: file.size,
+        type: file.extension,
+        url
+      });
     },
     getDate() {
       let months = [
@@ -162,12 +209,15 @@ export default {
       let newDate = new Date();
       let dateNumber = newDate.getDate();
       let month = months[newDate.getMonth()];
-      let hour = newDate.getHours()
-      let minute = newDate.getMinutes()
-      return [`${month} ${dateNumber}`, `${this.zeroPad(hour, 2)}:${this.zeroPad(minute, 2)}`]
+      let hour = newDate.getHours();
+      let minute = newDate.getMinutes();
+      return [
+        `${month} ${dateNumber}`,
+        `${this.zeroPad(hour, 2)}:${this.zeroPad(minute, 2)}`
+      ];
     },
-    zeroPad(num, pad){
-      return String(num).padStart(pad, '0')
+    zeroPad(num, pad) {
+      return String(num).padStart(pad, "0");
     }
   }
 };

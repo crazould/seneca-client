@@ -11,9 +11,10 @@ const firebaseConfig = {
     messagingSenderId: "167806167502",
     appId: "1:167806167502:web:b76e838f8393b1fceb639f",
     measurementId: "G-7DVBH3S1EC"
-  };
+};
   
-  firebase.initializeApp(firebaseConfig);
-  
-  window.Database = firebase.database()
-  window.StorageRef = firebase.storage().ref()
+firebase.initializeApp(firebaseConfig);
+
+window.Database = firebase.database()
+window.StorageRef = firebase.storage().ref().child('files')
+// window.StorageRef = firebase.storage().ref()
