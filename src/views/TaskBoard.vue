@@ -1,5 +1,34 @@
 <template lang="">
   <v-container>
+
+    <v-dialog v-model="confirmDialog" max-width="500">
+      <v-card>
+        <v-card-title
+          class="display-2 font-weight-light white--text"
+          style="background-color: #2b3ff0"
+        >
+          <v-icon class="white--text">
+            mdi-alert
+          </v-icon>
+          Confirmation!
+        </v-card-title>
+
+        <v-card-text class="my-5">
+          Are you sure want to delete this ?
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="confirmAction">
+            Yes, I am sure!
+          </v-btn>
+          <v-btn color="error" @click="confirmDialog = false, isConfirm = false">
+            No, I don't
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-dialog v-model="phaseDialog" max-width="500">
       <v-card>
         <v-card-title
@@ -221,7 +250,7 @@
                         >Edit</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item @click="deletePhase(i)">
+                    <v-list-item @click="showConfirm('DELETE_PHASE',i, -1, -1)">
                       <v-list-item-title class="red--text"
                         >Delete</v-list-item-title
                       >
@@ -271,7 +300,7 @@
                         >Add task</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item @click="deleteCategory(i, j)">
+                    <v-list-item @click="showConfirm('DELETE_CATEGORY',i, j, -1)">
                       <v-list-item-title class="red--text"
                         >Delete</v-list-item-title
                       >
@@ -328,7 +357,7 @@
                         >Edit</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item @click="deleteTask(i, j, k)">
+                    <v-list-item @click="showConfirm('DELETE_TASK',i, j, k)">
                       <v-list-item-title class="red--text"
                         >Delete</v-list-item-title
                       >
@@ -366,6 +395,9 @@ export default {
   name: "TaskBoard",
   components: {},
   data: () => ({
+    confirmDialog: false,
+    isConfirm: false,
+    confirmState: "",
     colorLabels: {
       Open: "blue--text",
       "On Progress": "deep-purple--text accent-2",
@@ -433,17 +465,25 @@ export default {
       });
     },
     setPhaseName() {
+
       if (
         this.phases.length == 0 ||
         this.phases == null ||
         this.phases == undefined
       ) {
         this.phaseName = "Backlog";
-      } else {
-        this.phaseName = `Sprint ${this.phases.length}`;
+      } 
+      else if(this.phases.length == 1){
+        this.phaseName = 'Sprint 1'
+      }
+      else if(this.phases.length >= 2)  {
+        let number = this.phases[this.phases.length-1].Name[this.phases[this.phases.length-1].Name.length-1]
+        this.phaseName = `Sprint ${parseInt(number)+1}`;
+        this.phaseDueDate = this.phases[this.phases.length-1].DueDate
       }
 
       this.phaseDialog = !this.phaseDialog;
+
     },
     addPhase() {
       this.phaseDueDateMsg = [];
@@ -461,14 +501,8 @@ export default {
         this.phases[idx] != undefined &&
         this.phases[idx].Categories != undefined
       ) {
-        console.log("masuk");
         currCategories = this.phases[idx].Categories;
       }
-
-      // console.log(this.phases[idx].Categories);
-      // console.log(currCategories);
-      // console.log(this.phaseIdx);
-      // console.log(this.phases.length);
 
       window.Database.ref(
         `Subjects/${this.currCourse.subject.ClassTransactionId}/Groups/${this.currCourse.group.Group.GroupNumber}/Phases/${idx}/`
@@ -524,6 +558,35 @@ export default {
           this.notifications.push(...notif);
         });
     },
+    showConfirm(state, phaseIdx, categoryIdx, taskIdx){
+
+      this.confirmState = state
+      this.phaseIdx = phaseIdx
+      this.categoryIdx = categoryIdx
+      this.taskIdx = taskIdx
+
+      this.confirmDialog = !this.confirmDialog
+
+    },
+    confirmAction(){
+
+      switch (this.confirmState) {
+        case "DELETE_PHASE":{
+          this.deletePhase(this.phaseIdx)
+          break;
+        }
+        case "DELETE_CATEGORY":{
+          this.deleteCategory(this.phaseIdx, this.categoryIdx)
+          break;
+        }
+        case "DELETE_TASK":{
+          this.deleteTask(this.phaseIdx, this.categoryIdx, this.taskIdx)
+          break;
+        }
+      }
+
+      this.confirmState = ""
+    },
     deletePhase(phaseIdx) {
       this.isLoading = true;
       this.phases.splice(phaseIdx, 1);
@@ -539,8 +602,10 @@ export default {
           this.message = "Something went wrong 😥";
         })
         .finally(() => {
+          this.phaseIdx = -1
           this.isShowMessage = true;
           this.isLoading = false;
+          this.confirmDialog = !this.confirmDialog
         });
     },
     deleteTask(phaseIdx, categoryIdx, taskIdx) {
@@ -557,8 +622,13 @@ export default {
           this.message = "Something went wrong 😥";
         })
         .finally(() => {
+          this.phaseIdx = -1
+          this.categoryIdx = -1
+          this.taskIdx = -1
           this.isShowMessage = true;
           this.isLoading = false;
+      this.confirmDialog = !this.confirmDialog
+
         });
     },
     deleteCategory(phaseIdx, categoryIdx) {
@@ -576,8 +646,12 @@ export default {
           this.message = "Something went wrong 😥";
         })
         .finally(() => {
+          this.phaseIdx = -1
+          this.categoryIdx = -1
           this.isShowMessage = true;
           this.isLoading = false;
+      this.confirmDialog = !this.confirmDialog
+
         });
     },
     changeTask() {
@@ -755,6 +829,8 @@ export default {
                     course.group.Group.GroupNumber
                   );
                 });
+              }).catch((err) => {
+                console.log(err)
               });
           }
         })
