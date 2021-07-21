@@ -7,7 +7,7 @@
           class="display-2 font-weight-light white--text"
           style="background-color: #2b3ff0"
         >
-          <v-icon class="white--text">
+          <v-icon class="white--text mr-5">
             mdi-alert
           </v-icon>
           Confirmation!
@@ -472,9 +472,11 @@ export default {
         this.phases == undefined
       ) {
         this.phaseName = "Backlog";
+        this.phaseDueDate =  new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)
       } 
       else if(this.phases.length == 1){
         this.phaseName = 'Sprint 1'
+        this.phaseDueDate =  new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)
       }
       else if(this.phases.length >= 2)  {
         let number = this.phases[this.phases.length-1].Name[this.phases[this.phases.length-1].Name.length-1]
@@ -518,7 +520,7 @@ export default {
               ? "New phase has been added ✨"
               : "Change has been saved ✨";
           axios
-            .post("http://localhost:3000/create-phase-notification", {
+            .post("https://seneca-server.herokuapp.com/create-phase-notification", {
               ClassTransactionId: this.currCourse.subject.ClassTransactionId,
               GroupNumber: this.currCourse.group.Group.GroupNumber,
               PhaseIdx: idx,
@@ -812,7 +814,7 @@ export default {
             "Completed"
           ) {
             axios
-              .post("http://localhost:3000/create-task-notification", {
+              .post("https://seneca-server.herokuapp.com/create-task-notification", {
                 ClassTransactionId: this.currCourse.subject.ClassTransactionId,
                 GroupNumber: this.currCourse.group.Group.GroupNumber,
                 PhaseIdx: this.phaseIdx,

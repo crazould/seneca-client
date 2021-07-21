@@ -124,7 +124,7 @@ export default {
 
       if (file) {
         file.name = uuidv4()
-        console.log(file.name)
+        // console.log(file.name)
 
         message.file = {
           name: file.name,
@@ -156,7 +156,6 @@ export default {
 
     },
 		openFile({ message }) {
-      console.log("masuk bang")
 			window.open(message.file.url, '_blank')
 		},
     async uploadFile({ file, messageId, roomId }) {
